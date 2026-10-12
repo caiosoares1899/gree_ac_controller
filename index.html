@@ -144,9 +144,9 @@ async function backendFirebase() {
   const { getDatabase, ref, push, onValue, query, limitToLast } = await import(FB + 'firebase-database.js');
   const { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } = await import(FB + 'firebase-auth.js');
   const cfg = {
-    apiKey: 'AIzaSyBzCOFtPCpaxUcLqX5Sq1GxYL2yAWnDAWU', authDomain: 'hering-onboarding.firebaseapp.com',
-    databaseURL: 'https://hering-onboarding-default-rtdb.firebaseio.com', projectId: 'hering-onboarding',
-    appId: '1:122502391131:web:0a31bed5ed2494e16ba67e',
+    apiKey: 'COLE_AQUI_A_API_KEY', authDomain: 'gree-ac-controller.firebaseapp.com',
+    databaseURL: 'https://gree-ac-controller-default-rtdb.firebaseio.com', projectId: 'gree-ac-controller',
+    appId: 'COLE_AQUI_O_APP_ID',
   };
   try { Object.assign(cfg, JSON.parse(localStorage.getItem('fb_gree') || '{}')); } catch (e) {}
   const app = initializeApp(cfg), db = getDatabase(app), auth = getAuth(app);

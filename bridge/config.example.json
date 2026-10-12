@@ -1,5 +1,5 @@
 {
-  "databaseURL": "https://hering-onboarding-default-rtdb.firebaseio.com",
+  "databaseURL": "https://gree-ac-controller-default-rtdb.firebaseio.com",
   "serviceAccount": "./service-account.json",
   "aparelhos": [
     { "id": "quarto", "nome": "Quarto", "host": "192.168.0.50" },
