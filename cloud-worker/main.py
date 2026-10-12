@@ -42,6 +42,14 @@ async def fb(fn, *a, **kw):
     return await asyncio.to_thread(fn, *a, **kw)      # firebase_admin é bloqueante
 
 
+LIMITE_ONLINE_MS = 45_000        # sem NENHUMA mensagem da Gree há mais que isso → marca offline na página
+LIMITE_RECONECTAR_MS = 90_000    # ...e há mais que isso → derruba a sessão e entra de novo
+
+
+class SessaoPerdida(Exception):
+    """A conexão com a nuvem da Gree parece morta (a lib não avisa: ela só deixa de receber respostas)."""
+
+
 def agora():
     return int(time.time() * 1000)
 
@@ -53,6 +61,7 @@ class Aparelho:
         self.ultimo = {}
         self.pendentes = {}                 # campo → (valor, quem, uid, até, preset) dos comandos que nós enviamos
         self.falhas = 0
+        self.resposta = agora()             # quando chegou a ÚLTIMA mensagem de estado da Gree (prova de que a conexão está viva)
 
     async def publicar(self, online=True):
         estado = estado_de(self.dev)
@@ -68,8 +77,9 @@ class Aparelho:
                     "quem": p[1] if meu else "Controle remoto", "uid": p[2] if meu else None,
                     "preset": (p[4] or None) if meu else None, "origem": "app" if meu else "aparelho"})
         self.ultimo = {k: estado[k] for k in CAMPOS}
+        vivo = t - self.resposta < LIMITE_ONLINE_MS
         await fb(db.reference("gree/aparelhos/" + self.id).update,
-                 {"nome": self.nome, "estado": estado, "online": online, "atualizado": t})
+                 {"nome": self.nome, "estado": estado, "online": bool(online and vivo), "atualizado": t, "respostaEm": self.resposta})
 
     async def atualizar(self):
         async with self.lock:
@@ -84,12 +94,25 @@ class Aparelho:
         preset = str(cmd.get("preset") or "")[:30]
         for k, v in patch.items():
             self.pendentes[k] = (v, quem, cmd.get("uid"), agora() + 20000, preset)
+        t0 = agora()
         async with self.lock:
             aplica_patch(self.dev, patch, Mode, FanSpeed, VerticalSwing)
             await self.dev.push_state_update()
             await self.dev.update_state()
+        if self.resposta < t0:              # a Gree não respondeu a NADA depois do comando: a conexão morreu em silêncio
+            raise SessaoPerdida("a Gree não respondeu ao comando (conexão parece morta)")
         log.info("[%s] %s → %s", self.id, quem, patch)
         await self.publicar()
+
+
+async def status_cmd(apid, cmd, ok, erro):
+    """Resultado do último comando, pra página mostrar (sem precisar ler log no servidor)."""
+    try:
+        await fb(db.reference("gree/status/ultimoComando").set, {
+            "ts": agora(), "aparelho": apid, "quem": str(cmd.get("quem") or "")[:40],
+            "patch": limpa_patch(cmd), "ok": bool(ok), "erro": (erro or "")[:200] or None})
+    except Exception as e:
+        log.warning("não consegui gravar o status: %s", e)
 
 
 def slug(s):
@@ -122,6 +145,7 @@ async def sessao(fila):
 
             def novo(*a, _orig=orig, _ap=ap, **kw):                # estado empurrado pela nuvem (ex.: alguém usou o controle)
                 r = _orig(*a, **kw)
+                _ap.resposta = agora()
                 loop.call_soon(lambda: loop.create_task(_ap.publicar()))
                 return r
             dev.handle_state_update = novo
@@ -141,15 +165,25 @@ async def sessao(fila):
                     log.info("[%s] modo só leitura: comando ignorado (%s)", apid, limpa_patch(cmd))
                     continue
                 ap = aparelhos.get(apid)
-                if ap:
-                    try:
-                        await ap.comando(cmd)
-                    except Exception as e:
-                        log.warning("[%s] comando falhou: %s", apid, e)
+                if not ap:
+                    continue
+                try:
+                    await ap.comando(cmd)
+                    await status_cmd(apid, cmd, True, None)
+                except Exception as e:
+                    log.warning("[%s] comando falhou: %s", apid, e)
+                    await status_cmd(apid, cmd, False, str(e))
+                    conexao = isinstance(e, (SessaoPerdida, asyncio.TimeoutError, TimeoutError)) or type(e).__name__ == "DeviceTimeoutError"
+                    if conexao:                                     # reconecta e tenta o MESMO comando de novo (1 vez)
+                        tent = int(cmd.get("_t") or 0)
+                        if tent < 1:
+                            fila.put_nowait((apid, pid, {**cmd, "_t": tent + 1}))
+                        raise SessaoPerdida("reconectando depois de falha no comando") from e
 
         async def vigiar():
             while True:
                 await asyncio.sleep(POLL)
+                await fb(db.reference("gree/status").update, {"viva": agora(), "somenteLeitura": SOMENTE_LEITURA})
                 for ap in aparelhos.values():
                     try:
                         await ap.atualizar()
@@ -161,10 +195,24 @@ async def sessao(fila):
                             await fb(db.reference("gree/aparelhos/" + ap.id).update, {"online": False, "atualizado": agora()})
                         if ap.falhas >= 6:
                             raise RuntimeError("sessão perdida — vou entrar de novo")
+                    idade = agora() - ap.resposta
+                    if idade > LIMITE_RECONECTAR_MS:
+                        raise SessaoPerdida("sem nenhuma resposta da Gree há %ds" % (idade // 1000))
+                    if idade > LIMITE_ONLINE_MS:
+                        log.warning("[%s] sem resposta da Gree há %ds", ap.id, idade // 1000)
 
-        await asyncio.gather(consumir(), vigiar())
+        tarefas = [asyncio.create_task(consumir()), asyncio.create_task(vigiar())]
+        feitas, pendentes = await asyncio.wait(tarefas, return_when=asyncio.FIRST_EXCEPTION)
+        for t in pendentes:
+            t.cancel()
+        for t in feitas:
+            t.result()                                              # propaga o erro pro supervisor
     finally:
         for ap in aparelhos.values():
+            try:                                                    # sessão acabou: a página mostra "reconectando" até a próxima entrar
+                await fb(db.reference("gree/aparelhos/" + ap.id).update, {"online": False, "atualizado": agora()})
+            except Exception:
+                pass
             try:
                 await ap.dev.close()
             except Exception:
@@ -187,9 +235,12 @@ async def main():
 
     espera = 5
     while True:                                                     # supervisor: cai → espera → entra de novo
+        inicio = time.time()
         try:
             await sessao(fila)
         except Exception as e:
+            if time.time() - inicio > 120:                          # a sessão viveu um bom tempo: a falha é nova, não precisa de espera longa
+                espera = 5
             log.error("Sessão encerrada: %s — nova tentativa em %ss", e, espera)
         await asyncio.sleep(espera)
         espera = min(espera * 2, 120)

@@ -183,7 +183,7 @@ input[type=range]::-moz-range-thumb{width:42px;height:42px;border:0;border-radiu
 
 <main id="app" style="width:100%;display:flex;flex-direction:column;align-items:center"></main>
 <div class="ultimo" id="ultimo"></div>
-<div class="version">v0.5.1 · gree</div>
+<div class="version">v0.6 · gree</div>
 
 <div class="ov" id="ov"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -192,7 +192,7 @@ input[type=range]::-moz-range-thumb{width:42px;height:42px;border:0;border-radiu
 <script type="module">
 // O SDK do Firebase só é carregado fora do modo demonstração (a demo abre sem rede).
 const FB = 'https://www.gstatic.com/firebasejs/10.12.0/';
-const VERSION = 'v0.5.1 · gree', VERSION_KEY = 'gree';
+const VERSION = 'v0.6 · gree', VERSION_KEY = 'gree';
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -239,6 +239,7 @@ function backendSim() {
   const emitP = () => { try { localStorage.setItem('gree_sim_presets', JSON.stringify(pres)); } catch (e) {} pcb && pcb(JSON.parse(JSON.stringify(pres))); };
   const emit = () => { cb && cb(JSON.parse(JSON.stringify(ap))); for (const id in hcb) hcb[id](hist[id].slice().reverse()); };
   return {
+    status: () => {},
     presets: f => { pcb = f; setTimeout(emitP, 50); },
     salvarPreset: (id, obj) => { pres[id || 'p' + Date.now()] = obj; emitP(); return Promise.resolve(); },
     apagarPreset: id => { delete pres[id]; emitP(); return Promise.resolve(); },
@@ -265,6 +266,7 @@ async function backendFirebase() {
   return {
     auth, provider: new GoogleAuthProvider(), signInWithPopup, signOut, onAuthStateChanged,
     ouvir: (f, erro) => onValue(ref(db, 'gree/aparelhos'), s => f(s.val() || {}), erro),
+    status: f => onValue(ref(db, 'gree/status'), s => f(s.val() || {}), e => console.warn('status:', e && e.code)),
     presets: f => onValue(ref(db, 'gree/presets'), s => f(s.val() || {}), e => console.warn('presets:', e && e.code)),
     salvarPreset: (id, obj) => id ? set(ref(db, 'gree/presets/' + id), obj) : push(ref(db, 'gree/presets'), obj),
     apagarPreset: id => remove(ref(db, 'gree/presets/' + id)),
@@ -277,6 +279,7 @@ async function backendFirebase() {
 
 // ── Estado da tela ──
 let aparelhos = {}, ativo = null, otimista = {};   // otimista[id][campo] = {v, ate}
+let status = {}, ultimoAvisado = 0;
 let sheetHist = null, tempMostrada = null, presets = {}, editandoPresets = false, ed = null;
 const estadoDe = id => {
   const e = { ...((aparelhos[id] || {}).estado || {}) }, o = otimista[id] || {}, t = Date.now();
@@ -436,7 +439,10 @@ function render() {
   const dp = $('#disp'); if (dp) dp.textContent = ligado && luz ? temp : '', $('#led') && $('#led').setAttribute('opacity', ligado && luz ? 1 : 0);
   $('#t-mi').innerHTML = ico(m[0]); $('#t-mv').textContent = m[1]; $('#t-fv').textContent = v[1]; $('#t-sv').textContent = al[1];
   $('#t-tv').textContent = turbo ? 'Ligado' : 'Desligado'; $('#t-turbo').setAttribute('aria-pressed', turbo);
-  $('#c-status').innerHTML = ap.online === false ? '<i class="dot av"></i>Sem resposta do aparelho' : enviando[ativo] > 0 ? '<i class="spin"></i>Enviando…' : '<i class="dot"></i>Sincronizado';
+  const agoraMs = Date.now(), parado = status.viva && agoraMs - status.viva > 60000, semResp = ap.respostaEm && agoraMs - ap.respostaEm > 60000;
+  $('#c-status').innerHTML = parado ? `<i class="dot av"></i>Serviço parado há ${Math.round((agoraMs - status.viva) / 60000)} min`
+    : (ap.online === false || semResp) ? '<i class="dot av"></i>Sem resposta da Gree — reconectando…'
+    : enviando[ativo] > 0 ? '<i class="spin"></i>Enviando…' : '<i class="dot"></i>Sincronizado';
   c.style.opacity = ap.online === false ? .85 : 1;
   renderPresets(e);
   if (sheetHist) montaHist();
@@ -601,6 +607,12 @@ function inicia() {
   backend.ouvir(d => { aparelhos = d; Object.keys(d).forEach(ouveHist); aparelhosOk = true; render(); tentaLink(); },
     e => { $('#app').innerHTML = '<div class="msg"><h2>🔒 Sem acesso</h2><p>Esse e-mail ainda não foi liberado pra controlar os aparelhos.</p><button class="btn sec" id="bt-sair2">Sair</button></div>'; $('#bt-sair2').onclick = () => backend.signOut(backend.auth); });
   backend.presets(p => { presets = p || {}; presetsOk = true; render(); tentaLink(); });
+  backend.status(st => {
+    status = st || {};
+    const u = status.ultimoComando;                                  // o serviço avisa quando um comando não chegou ao ar
+    if (u && u.ts !== ultimoAvisado) { ultimoAvisado = u.ts; if (!u.ok && Date.now() - u.ts < 30000) toast('⚠️ O ar não respondeu — o serviço está reconectando…'); }
+    render();
+  });
   requestAnimationFrame(quadro);
   setInterval(render, 30000);            // atualiza os "há X min"
 }
