@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#030d1a">
+<title>Ar · Gree</title>
+<link rel="icon" href="favicon-oceano.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --deep:#030d1a; --glass:rgba(10,37,64,.6); --glass-border:rgba(56,182,255,.18); --glass-hover:rgba(56,182,255,.1);
+  --accent:#38b6ff; --cyan:#7ec8e3; --teal:#1de9b6; --txt:#e8f4fd; --txt2:rgba(200,230,255,.65); --warn:#ffd166; --danger:#ff6b6b;
+  --modo:#38b6ff;                       /* cor do modo atual (muda com o modo) */
+}
+[hidden]{display:none!important}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{font-family:'DM Sans',system-ui,sans-serif;color:var(--txt);min-height:100vh;
+  background:radial-gradient(ellipse at 20% 80%,rgba(0,80,160,.4) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(0,150,180,.25) 0%,transparent 55%),#010810;
+  background-attachment:fixed;display:flex;flex-direction:column;align-items:center;padding:max(16px,env(safe-area-inset-top)) 16px 40px}
+button{font:inherit;color:inherit;cursor:pointer}
+.topo{width:100%;max-width:420px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.topo h1{font:800 18px Syne,sans-serif;margin:0}
+.abas{display:flex;gap:6px;flex:1;justify-content:center}
+.aba{background:var(--glass);border:1px solid var(--glass-border);border-radius:999px;padding:6px 14px;backdrop-filter:blur(8px);font-size:13px;font-weight:500}
+.aba[aria-selected=true]{background:var(--glass-hover);border-color:var(--accent);color:var(--accent)}
+.chip{background:var(--glass);border:1px solid var(--glass-border);border-radius:999px;padding:6px 10px;font-size:12px;backdrop-filter:blur(8px);color:var(--txt2)}
+.card{position:relative;width:100%;max-width:420px;border-radius:26px;overflow:hidden;background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:0 20px 60px rgba(0,0,0,.45);padding:18px 18px 14px;transition:box-shadow .6s}
+.card[data-on="1"]{box-shadow:0 20px 60px rgba(0,0,0,.45),0 0 60px -10px color-mix(in srgb,var(--modo) 45%,transparent)}
+.card>*:not(canvas){position:relative;z-index:1}
+#fx-neve{position:absolute;inset:0;z-index:0;pointer-events:none;width:100%;height:100%}
+.cab{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.nome{font-weight:700;font-size:16px}.nome small{font-weight:400;color:var(--txt2);margin-left:6px;font-size:14px}
+.power{width:46px;height:46px;border-radius:50%;border:1px solid var(--glass-border);background:rgba(255,255,255,.06);display:grid;place-items:center;transition:.25s}
+.power svg{width:22px;height:22px;stroke:var(--txt2);fill:none;stroke-width:2.4;stroke-linecap:round}
+.card[data-on="1"] .power{background:var(--modo);border-color:var(--modo);box-shadow:0 0 22px color-mix(in srgb,var(--modo) 60%,transparent)}
+.card[data-on="1"] .power svg{stroke:#03203a}
+.cena{position:relative;height:250px;margin:6px -4px 0}
+.cena svg{position:absolute;left:0;top:0;width:100%;height:auto;overflow:visible}
+#fx-ar{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.temp{display:flex;align-items:flex-start;font:800 64px/1 Syne,sans-serif;margin:2px 0 14px;min-height:64px}
+.temp sup{font:500 22px 'DM Sans';color:var(--txt2);margin:6px 0 0 4px}
+.temp.off{opacity:.35}
+.ajuste{display:flex;align-items:center;gap:10px}
+.bt{width:44px;height:44px;flex:none;border-radius:50%;border:1px solid var(--glass-border);background:rgba(255,255,255,.06);font-size:22px;display:grid;place-items:center}
+.bt:active{background:var(--glass-hover)}
+.slider{flex:1;position:relative}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:48px;background:transparent;margin:0;touch-action:none}
+input[type=range]::-webkit-slider-runnable-track{height:48px;border-radius:24px;background:linear-gradient(90deg,color-mix(in srgb,var(--modo) 70%,#1d4ed8),var(--modo)) 0/var(--p,50%) 100% no-repeat,rgba(255,255,255,.07)}
+input[type=range]::-moz-range-track{height:48px;border-radius:24px;background:linear-gradient(90deg,color-mix(in srgb,var(--modo) 70%,#1d4ed8),var(--modo)) 0/var(--p,50%) 100% no-repeat,rgba(255,255,255,.07)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:36px;height:36px;margin-top:6px;border-radius:50%;background:#f2f8ff;box-shadow:0 2px 10px rgba(0,0,0,.4)}
+input[type=range]::-moz-range-thumb{width:36px;height:36px;border:0;border-radius:50%;background:#f2f8ff;box-shadow:0 2px 10px rgba(0,0,0,.4)}
+.escala{display:flex;justify-content:space-between;font-size:11px;color:var(--txt2);margin:2px 56px 0}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.tile{background:rgba(255,255,255,.05);border:1px solid var(--glass-border);border-radius:16px;padding:12px 10px;text-align:left;display:flex;flex-direction:column;gap:2px;min-height:78px;position:relative}
+.tile .ic{font-size:20px}.tile .lb{font-size:12px;color:var(--txt2)}.tile .vl{font-weight:700;font-size:14px}
+.tile:active{background:var(--glass-hover)}
+.tile[aria-pressed=true]{border-color:var(--modo)}
+.sw{position:absolute;right:10px;top:10px;width:44px;height:26px;border-radius:13px;background:rgba(255,255,255,.12);transition:.2s}
+.sw::after{content:'';position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#f2f8ff;transition:.2s}
+.tile[aria-pressed=true] .sw{background:var(--modo)}.tile[aria-pressed=true] .sw::after{left:21px}
+.rodape{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:13px;color:var(--txt2);gap:8px}
+.rodape button{background:none;border:0;padding:6px;color:var(--txt2)}
+.ultimo{width:100%;max-width:420px;margin-top:12px;text-align:center;font-size:13px;color:var(--txt2)}
+.ultimo button{background:none;border:0;color:var(--accent);text-decoration:underline;font-size:13px}
+.msg{width:100%;max-width:420px;text-align:center;margin-top:60px;line-height:1.5}
+.msg h2{font:800 22px Syne,sans-serif;margin:0 0 8px}
+.btn{background:var(--accent);color:#03203a;border:0;border-radius:999px;padding:12px 22px;font-weight:700;margin:6px}
+.btn.sec{background:var(--glass);color:var(--txt);border:1px solid var(--glass-border)}
+.ov{position:fixed;inset:0;background:rgba(1,8,16,.6);display:none;align-items:flex-end;justify-content:center;z-index:10;backdrop-filter:blur(4px)}
+.ov.on{display:flex}
+.sheet{width:100%;max-width:420px;background:rgba(10,37,64,.92);border:1px solid var(--glass-border);border-radius:24px 24px 0 0;padding:18px 16px max(20px,env(safe-area-inset-bottom));max-height:75vh;overflow:auto;backdrop-filter:blur(18px)}
+.sheet h3{font:800 16px Syne,sans-serif;margin:0 0 10px}
+.op{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;border-radius:12px;padding:12px 10px;font-size:15px}
+.op:hover,.op[aria-checked=true]{background:var(--glass-hover)}.op[aria-checked=true]{color:var(--accent);font-weight:700}
+.hist{display:flex;flex-direction:column;gap:2px;font-size:14px}
+.hist div{padding:8px 4px;border-bottom:1px solid var(--glass-border)}.hist small{color:var(--txt2);margin-left:6px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--glass);border:1px solid var(--glass-border);border-radius:999px;padding:10px 18px;font-size:14px;backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:.25s;z-index:20}
+.toast.on{opacity:1}
+.version{margin-top:24px;font-size:11px;color:var(--txt2);opacity:.6}
+.upd{position:fixed;inset:0;z-index:30;background:rgba(1,8,16,.85);display:none;place-items:center;text-align:center;padding:24px}.upd.on{display:grid}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="topo" id="topo" hidden>
+  <h1>🌬️ Ar</h1>
+  <div class="abas" id="abas" role="tablist"></div>
+  <button class="chip" id="bt-sair" type="button" title="Sair">👤</button>
+</div>
+
+<main id="app"></main>
+<div class="ultimo" id="ultimo"></div>
+<div class="version">v0.1 · gree</div>
+
+<div class="ov" id="ov"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="upd" id="upd"><div><h2 style="font:800 22px Syne">🔄 Tem versão nova</h2><button class="btn" onclick="location.reload()">Atualizar agora</button></div></div>
+
+<script type="module">
+// O SDK do Firebase só é carregado fora do modo demonstração (a demo abre sem rede).
+const FB = 'https://www.gstatic.com/firebasejs/10.12.0/';
+
+const VERSION = 'v0.1 · gree', VERSION_KEY = 'gree';
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const vibra = n => { try { navigator.vibrate && navigator.vibrate(n); } catch (e) {} };
+const toast = t => { const e = $('#toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => e.classList.remove('on'), 2400); };
+
+// ── Vocabulário (os mesmos valores que a ponte/gree-hvac-client usam) ──
+const MODOS = [['cool','❄️','Resfriar','#38b6ff'],['heat','🔥','Aquecer','#ff9a4d'],['dry','💧','Secar','#7ec8e3'],['fan_only','🌀','Ventilar','#cfe8fb'],['auto','✨','Auto','#1de9b6']];
+const VENTS = [['auto','Auto',.55],['low','Baixa',.25],['mediumLow','Média-baixa',.4],['medium','Média',.6],['mediumHigh','Média-alta',.8],['high','Alta',1]];
+// ar: de 0 (horizontal, "pra frente") a 1 (reto pra baixo)
+const ALETAS = [['default','Padrão',.5],['full','Oscilar',null],['fixedTop','Alto',.1],['fixedMidTop','Meio-alto',.3],['fixedMid','Meio',.5],['fixedMidBottom','Meio-baixo',.75],['fixedBottom','Baixo',1]];
+const find = (arr, k) => arr.find(x => x[0] === k) || arr[0];
+
+// ── Backend: Firebase (ponte em casa) ou demonstração (tudo local) ──
+const SIM = new URLSearchParams(location.search).has('sim') || localStorage.getItem('gree_sim') === '1';
+let backend, usuario = null;
+
+function backendSim() {
+  const ap = {
+    quarto: { nome:'Quarto', online:true, estado:{power:'on',mode:'cool',temperature:24,currentTemperature:26,fanSpeed:'auto',turbo:'off',swingVert:'full'} },
+    sala:   { nome:'Sala',   online:true, estado:{power:'off',mode:'heat',temperature:22,currentTemperature:19,fanSpeed:'medium',turbo:'off',swingVert:'fixedMid'} },
+  };
+  const hist = { quarto: [], sala: [] }; let cb = null; const hcb = {};
+  const emit = () => { cb && cb(JSON.parse(JSON.stringify(ap))); for (const id in hcb) hcb[id](hist[id].slice().reverse()); };
+  return {
+    ouvir: f => { cb = f; setTimeout(emit, 50); },
+    historico: (id, f) => { hcb[id] = f; f(hist[id].slice().reverse()); },
+    enviar: (id, patch) => new Promise(res => setTimeout(() => {          // finge o vai-e-vem da ponte (~400ms)
+      for (const [k, v] of Object.entries(patch)) { hist[id].push({ campo:k, para:v, quem:'Você (demo)', ts:Date.now() }); ap[id].estado[k] = v; }
+      emit(); res();
+    }, 400)),
+  };
+}
+
+async function backendFirebase() {
+  const { initializeApp } = await import(FB + 'firebase-app.js');
+  const { getDatabase, ref, push, onValue, query, limitToLast } = await import(FB + 'firebase-database.js');
+  const { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } = await import(FB + 'firebase-auth.js');
+  const cfg = {
+    apiKey: 'AIzaSyBzCOFtPCpaxUcLqX5Sq1GxYL2yAWnDAWU', authDomain: 'hering-onboarding.firebaseapp.com',
+    databaseURL: 'https://hering-onboarding-default-rtdb.firebaseio.com', projectId: 'hering-onboarding',
+    appId: '1:122502391131:web:0a31bed5ed2494e16ba67e',
+  };
+  try { Object.assign(cfg, JSON.parse(localStorage.getItem('fb_gree') || '{}')); } catch (e) {}
+  const app = initializeApp(cfg), db = getDatabase(app), auth = getAuth(app);
+  return {
+    auth, provider: new GoogleAuthProvider(), signInWithPopup, signOut, onAuthStateChanged,
+    ouvir: (f, erro) => onValue(ref(db, 'gree/aparelhos'), s => f(s.val() || {}), erro),
+    historico: (id, f) => onValue(query(ref(db, 'gree/historico/' + id), limitToLast(30)), s => {
+      const l = []; s.forEach(c => { l.push(c.val()); }); f(l.reverse());
+    }),
+    enviar: (id, patch) => push(ref(db, 'gree/comandos/' + id), { ...patch, ts: Date.now(), quem: (usuario.displayName || usuario.email || 'Alguém').split(' ')[0], uid: usuario.uid }),
+  };
+}
+
+// ── Estado da tela ──
+let aparelhos = {}, ativo = null, otimista = {};   // otimista[id][campo] = {v, ate}
+let sheetHist = null;
+const estadoDe = id => {
+  const e = { ...((aparelhos[id] || {}).estado || {}) }, o = otimista[id] || {}, t = Date.now();
+  for (const k in o) { if (o[k].ate > t) e[k] = o[k].v; else delete o[k]; }
+  return e;
+};
+const enviando = {};   // id → nº de comandos em voo
+
+function aplica(id, patch) {
+  otimista[id] = otimista[id] || {};
+  for (const k in patch) otimista[id][k] = { v: patch[k], ate: Date.now() + 5000 };
+  enviando[id] = (enviando[id] || 0) + 1; vibra(8); render();
+  Promise.resolve(backend.enviar(id, patch)).then(() => { enviando[id]--; render(); },
+    () => { enviando[id]--; otimista[id] = {}; render(); toast('⚠️ Não deu pra enviar — confere a conexão.'); });
+}
+
+// ── Cena: unidade + aleta + partículas de ar + neve ──
+const fx = { ar: [], neve: [], fluxo: .5, vel: 1, dens: 0, modo: 'cool', ligado: false, aleta: .5, oscila: false, fase: 0, turbo: false, acc: 0 };
+const cena = () => `
+<svg viewBox="0 0 360 120" aria-hidden="true">
+  <defs><linearGradient id="gu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#e3edf7"/><stop offset="1" stop-color="#b9c9db"/></linearGradient></defs>
+  <rect x="30" y="14" width="300" height="66" rx="22" fill="url(#gu)"/>
+  <rect x="42" y="64" width="276" height="9" rx="4.5" fill="#0b1626"/>
+  <polygon id="aleta" points="44,68 316,68 312,70 48,70" fill="#dbe6f2"/>
+  <text id="disp" x="262" y="40" font-family="Syne,sans-serif" font-weight="700" font-size="14" fill="#38b6ff" text-anchor="middle"></text>
+  <circle cx="82" cy="40" r="2" fill="#9fb2c6"/>
+</svg>
+<canvas id="fx-ar"></canvas>`;
+
+function ajustaCanvas(c) { const r = c.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2); c.width = r.width * d; c.height = r.height * d; return d; }
+
+let ultimoT = 0;
+function quadro(t) {
+  const dt = Math.min((t - ultimoT) / 1000 || .016, .05); ultimoT = t; requestAnimationFrame(quadro);
+  const cAr = $('#fx-ar'), cNeve = $('#fx-neve');
+  if (fx.oscila) fx.fase += dt * (fx.turbo ? 1.6 : .9);
+  const a = fx.oscila ? .1 + .9 * (.5 + .5 * Math.sin(fx.fase)) : fx.aleta;     // posição REAL da aleta (0 = horizontal, 1 = reto pra baixo)
+  const al = $('#aleta'); if (al) { const h = 2 + a * 20; al.setAttribute('points', `44,68 316,68 ${312 + a * 2},${68 + h} ${48 - a * 2},${68 + h}`); }
+
+  if (cAr) {
+    const d = ajustaCanvasCached(cAr), W = cAr.width, H = cAr.height, g = cAr.getContext('2d'), s = W / 360;
+    g.clearRect(0, 0, W, H);
+    // emissão: densidade e velocidade seguem a ventilação (turbo = rajada)
+    const alvoD = fx.ligado ? (fx.dens * (fx.turbo ? 1.9 : 1)) : 0, alvoV = fx.vel * (fx.turbo ? 1.7 : 1);
+    fx.dAtual = (fx.dAtual || 0) + (alvoD - (fx.dAtual || 0)) * Math.min(1, dt * 3);
+    fx.vAtual = (fx.vAtual || 0) + (alvoV - (fx.vAtual || 0)) * Math.min(1, dt * 3);
+    fx.acc += dt * 70 * fx.dAtual * (reduz ? .4 : 1);
+    while (fx.acc >= 1 && fx.ar.length < 260) {
+      fx.acc--;
+      const x = 52 + Math.random() * 256, spread = (1 - a) * .9;      // aleta alta: o ar abre pra frente; baixa: cai reto
+      fx.ar.push({ x, y: 76 + a * 18, vx: (x - 180) / 180 * spread * 40 + (Math.random() - .5) * 14 * spread,
+        vy: (55 + 90 * (.4 + a * .6)) * (.8 + Math.random() * .4), l: 0, vida: (.9 + Math.random() * .8) * (1.2 - (1 - a) * .4), w: .8 + Math.random() * 1.1, dx: Math.random() * 6.28 });
+    }
+    const cor = { cool:'150,215,255', heat:'255,170,100', dry:'170,225,240', fan_only:'225,240,255', auto:'120,240,205' }[fx.modo] || '150,215,255';
+    for (let i = fx.ar.length - 1; i >= 0; i--) {
+      const p = fx.ar[i]; p.l += dt; if (p.l > p.vida || p.y > 250) { fx.ar.splice(i, 1); continue; }
+      const v = fx.vAtual; p.x += (p.vx + Math.sin(p.l * 5 + p.dx) * 6) * dt * v; p.y += p.vy * dt * v;
+      const k = 1 - p.l / p.vida, comp = (6 + 16 * v) * p.w;
+      g.strokeStyle = `rgba(${cor},${.5 * k})`; g.lineWidth = p.w * s * (fx.turbo ? 1.3 : 1); g.lineCap = 'round';
+      g.beginPath(); g.moveTo(p.x * s, p.y * s); g.lineTo((p.x - p.vx * dt * comp * .15) * s, (p.y - comp) * s); g.stroke();
+    }
+  }
+  if (cNeve) {
+    ajustaCanvasCached(cNeve); const W = cNeve.width, H = cNeve.height, g = cNeve.getContext('2d'), d = W / cNeve.getBoundingClientRect().width || 1;
+    g.clearRect(0, 0, W, H);
+    const inverno = fx.ligado && fx.modo === 'heat' && !reduz;
+    if (inverno && fx.neve.length < 70 && Math.random() < dt * 30) fx.neve.push({ x: Math.random() * W, y: -10, r: (1.2 + Math.random() * 2.6) * d, vy: (14 + Math.random() * 26) * d, ph: Math.random() * 6.28 });
+    for (let i = fx.neve.length - 1; i >= 0; i--) {
+      const f = fx.neve[i]; f.y += f.vy * dt * (fx.turbo ? 1.8 : 1); f.x += Math.sin(t / 900 + f.ph) * 14 * dt * d;
+      if (f.y > H + 10) { fx.neve.splice(i, 1); continue; }
+      g.fillStyle = 'rgba(235,245,255,.75)'; g.beginPath(); g.arc(f.x, f.y, f.r, 0, 6.283); g.fill();
+    }
+    if (!inverno && fx.neve.length) fx.neve.length = Math.max(0, fx.neve.length - 1);
+  }
+}
+const tam = new WeakMap();
+function ajustaCanvasCached(c) { const r = c.getBoundingClientRect(), k = r.width + 'x' + r.height; if (tam.get(c) !== k) { tam.set(c, k); ajustaCanvas(c); } return 1; }
+
+// ── Render ──
+function render() {
+  const ids = Object.keys(aparelhos);
+  if (!ids.length) { $('#app').innerHTML = '<div class="msg"><h2>🐟 Nenhum aparelho por aqui</h2><p>A ponte ainda não publicou nada. Confere se ela está rodando no PC de casa.</p></div>'; return; }
+  if (!ativo || !aparelhos[ativo]) ativo = ids[0];
+  $('#topo').hidden = false;
+  $('#abas').innerHTML = ids.length > 1 ? ids.map(id => `<button class="aba" role="tab" data-aba="${esc(id)}" aria-selected="${id === ativo}">${esc(aparelhos[id].nome || id)}</button>`).join('') : '';
+  const ap = aparelhos[ativo], e = estadoDe(ativo), ligado = e.power === 'on', m = find(MODOS, e.mode), v = find(VENTS, e.fanSpeed), al = find(ALETAS, e.swingVert), turbo = e.turbo === 'on';
+  const temp = Math.round(+e.temperature) || 24;
+  fx.modo = m[0]; fx.ligado = ligado; fx.dens = v[2]; fx.vel = .6 + v[2] * .8; fx.turbo = turbo; fx.oscila = al[2] === null; fx.aleta = al[2] == null ? .5 : al[2];
+  const card = $('#card');
+  const novo = !card || card.dataset.id !== ativo;
+  if (novo) {
+    $('#app').innerHTML = `<section class="card" id="card" data-id="${esc(ativo)}"><canvas id="fx-neve"></canvas>
+      <div class="cab"><div class="nome" id="c-nome"></div><button class="power" id="c-power" aria-label="Ligar/desligar"><svg viewBox="0 0 24 24"><path d="M12 3v8M6.4 6.6a8 8 0 1 0 11.2 0"/></svg></button></div>
+      <div class="cena">${cena()}</div>
+      <div class="temp" id="c-temp"></div>
+      <div class="ajuste"><button class="bt" id="c-menos" aria-label="Diminuir">−</button><div class="slider"><input type="range" id="c-range" min="16" max="30" step="1" aria-label="Temperatura"></div><button class="bt" id="c-mais" aria-label="Aumentar">+</button></div>
+      <div class="escala"><span>16°</span><span>30°</span></div>
+      <div class="tiles"><button class="tile" data-sheet="mode"><span class="ic" id="t-mi"></span><span class="lb">Modo</span><span class="vl" id="t-mv"></span></button>
+        <button class="tile" data-sheet="fan"><span class="ic">🌀</span><span class="lb">Ventilação</span><span class="vl" id="t-fv"></span></button>
+        <button class="tile" id="t-turbo" aria-pressed="false"><span class="ic">💨</span><span class="lb">Turbo</span><span class="vl" id="t-tv"></span><i class="sw"></i></button></div>
+      <div class="tiles" style="margin-top:8px;grid-template-columns:1fr 1fr"><button class="tile" data-sheet="swing" style="min-height:64px"><span class="lb">↕️ Aleta</span><span class="vl" id="t-sv"></span></button>
+        <button class="tile" id="t-hist" style="min-height:64px"><span class="lb">🕐 Histórico</span><span class="vl">Quem mexeu</span></button></div>
+      <div class="rodape"><span id="c-status"></span><button id="c-ref" aria-label="Atualizar">⟳</button></div></section>`;
+  }
+  const c = $('#card'); c.dataset.on = ligado ? 1 : 0; c.style.setProperty('--modo', m[3]);
+  $('#c-nome').innerHTML = `${esc(ap.nome || ativo)}<small>${e.currentTemperature != null ? Math.round(e.currentTemperature) + '°C' : ''}</small>`;
+  const tEl = $('#c-temp'); tEl.className = 'temp' + (ligado ? '' : ' off'); tEl.innerHTML = `${temp}<sup>°C</sup>`;
+  const rg = $('#c-range'); if (document.activeElement !== rg) rg.value = temp; rg.style.setProperty('--p', ((temp - 16) / 14 * 100) + '%');
+  const dp = $('#disp'); if (dp) dp.textContent = ligado ? temp : '';
+  $('#t-mi').textContent = m[1]; $('#t-mv').textContent = m[2]; $('#t-fv').textContent = v[1]; $('#t-sv').textContent = al[1];
+  $('#t-tv').textContent = turbo ? 'Ligado' : 'Desligado'; $('#t-turbo').setAttribute('aria-pressed', turbo);
+  $('#c-status').textContent = ap.online === false ? '⚠️ Sem resposta do aparelho' : enviando[ativo] > 0 ? '⏳ Enviando…' : '✅ Sincronizado';
+  if (!ap.online && ap.online !== undefined) c.style.opacity = .85; else c.style.opacity = 1;
+  if (sheetHist) montaHist();
+}
+
+// ── Ações ──
+let tTemp = null;
+function setTemp(n) {
+  n = Math.max(16, Math.min(30, n)); const id = ativo;
+  otimista[id] = otimista[id] || {}; otimista[id].temperature = { v: n, ate: Date.now() + 5000 }; render();
+  clearTimeout(tTemp); tTemp = setTimeout(() => { aplica(id, { temperature: n }); }, 350);     // junta cliques/arrasto num comando só
+}
+document.addEventListener('click', ev => {
+  const t = ev.target.closest('button'); if (!t) return; const id = ativo;
+  if (t.dataset.aba) { ativo = t.dataset.aba; render(); }
+  else if (t.id === 'c-power') aplica(id, { power: estadoDe(id).power === 'on' ? 'off' : 'on' });
+  else if (t.id === 'c-menos') setTemp((+estadoDe(id).temperature || 24) - 1);
+  else if (t.id === 'c-mais') setTemp((+estadoDe(id).temperature || 24) + 1);
+  else if (t.id === 't-turbo') aplica(id, { turbo: estadoDe(id).turbo === 'on' ? 'off' : 'on' });
+  else if (t.id === 'c-ref') { vibra(8); toast('🔄 Atualizando…'); render(); }
+  else if (t.id === 't-hist') abreHist();
+  else if (t.dataset.sheet) abreSheet(t.dataset.sheet);
+  else if (t.id === 'bt-sair') { if (SIM) { localStorage.removeItem('gree_sim'); location.href = location.pathname; } else backend.signOut(backend.auth); }
+  else if (t.id === 'bt-demo') { localStorage.setItem('gree_sim', '1'); location.reload(); }
+  else if (t.id === 'bt-google') backend.signInWithPopup(backend.auth, backend.provider).catch(e => toast('❌ Login não completou: ' + (e.code || e.message)));
+  else if (t.dataset.v !== undefined) { aplica(id, { [t.dataset.k]: t.dataset.v }); fecha(); }
+});
+document.addEventListener('input', ev => { if (ev.target.id === 'c-range') setTemp(+ev.target.value); });
+$('#ov').addEventListener('click', ev => { if (ev.target.id === 'ov') fecha(); });
+function fecha() { sheetHist = null; $('#ov').classList.remove('on'); }
+function abreSheet(tipo) {
+  const e = estadoDe(ativo), cfg = { mode: ['Modo', 'mode', MODOS.map(x => [x[0], x[1] + ' ' + x[2]])], fan: ['Ventilação', 'fanSpeed', VENTS.map(x => [x[0], x[1]])], swing: ['Aleta (direção do ar)', 'swingVert', ALETAS.map(x => [x[0], x[1]])] }[tipo];
+  $('#sheet').innerHTML = `<h3>${cfg[0]}</h3>` + cfg[2].map(o => `<button class="op" role="radio" aria-checked="${e[cfg[1]] === o[0]}" data-k="${cfg[1]}" data-v="${o[0]}">${o[1]}</button>`).join('');
+  $('#ov').classList.add('on');
+}
+function abreHist() { sheetHist = []; $('#ov').classList.add('on'); montaHist(); }
+const NOME_CAMPO = { power: v => v === 'on' ? 'ligou' : 'desligou', temperature: v => `pôs ${v}°`, mode: v => 'mudou pra ' + find(MODOS, v)[2], fanSpeed: v => 'ventilação ' + find(VENTS, v)[1].toLowerCase(), turbo: v => v === 'on' ? 'ligou o turbo' : 'desligou o turbo', swingVert: v => 'aleta: ' + find(ALETAS, v)[1].toLowerCase(), quiet: v => 'silencioso ' + v, lights: v => 'luz do painel ' + (v === 'on' ? 'ligada' : 'apagada') };
+const quando = ts => { const m = Math.round((Date.now() - ts) / 60000); return m < 1 ? 'agora' : m < 60 ? `há ${m} min` : m < 1440 ? `há ${Math.round(m / 60)} h` : new Date(ts).toLocaleDateString('pt-BR'); };
+const frase = h => `<b>${esc(h.quem || '?')}</b> ${(NOME_CAMPO[h.campo] || (() => 'mexeu em ' + esc(h.campo)))(h.para)}`;
+function montaHist() {
+  const l = histCache[ativo] || [];
+  $('#sheet').innerHTML = '<h3>🕐 Quem mexeu</h3><div class="hist">' + (l.length ? l.map(h => `<div>${frase(h)}<small>${quando(h.ts)}</small></div>`).join('') : '<p style="color:var(--txt2)">Ainda sem registros por aqui.</p>') + '</div>';
+}
+const histCache = {}, histOuvindo = {};
+function ouveHist(id) {
+  if (histOuvindo[id]) return; histOuvindo[id] = 1;
+  backend.historico(id, l => { histCache[id] = l; const u = $('#ultimo'), a = histCache[ativo]; if (a && a[0]) u.innerHTML = `Último ajuste: ${frase(a[0])} · ${quando(a[0].ts)}`; else u.textContent = ''; if (sheetHist) montaHist(); });
+}
+
+// ── Início ──
+function inicia() {
+  backend.ouvir(d => { aparelhos = d; Object.keys(d).forEach(ouveHist); render(); },
+    e => { $('#app').innerHTML = '<div class="msg"><h2>🔒 Sem acesso</h2><p>Esse e-mail ainda não foi liberado pra controlar os aparelhos.</p><button class="btn sec" id="bt-sair2">Sair</button></div>'; $('#bt-sair2').onclick = () => backend.signOut(backend.auth); });
+  requestAnimationFrame(quadro);
+  setInterval(render, 30000);            // atualiza os "há X min"
+}
+function telaLogin() {
+  $('#topo').hidden = true;
+  $('#app').innerHTML = '<div class="msg"><h2>🌬️ Ar da casa</h2><p>Entra com o Google pra controlar os aparelhos — e todo mundo vê quem mexeu por último.</p><button class="btn" id="bt-google">Entrar com Google</button><br><button class="btn sec" id="bt-demo">Ver demonstração</button></div>';
+}
+if (SIM) { backend = backendSim(); usuario = { displayName: 'Você', uid: 'sim' }; inicia(); }
+else {
+  backend = await backendFirebase();
+  let rodando = false;
+  backend.onAuthStateChanged(backend.auth, u => { usuario = u; if (!u) { telaLogin(); return; } if (!rodando) { rodando = true; inicia(); } });
+}
+
+// ── Auto-atualização (mesmo mecanismo das outras páginas) ──
+async function confereVersao() {
+  try { const j = await (await fetch('version.json', { cache: 'no-store' })).json(); if (j[VERSION_KEY] && j[VERSION_KEY] !== VERSION) $('#upd').classList.add('on'); } catch (e) {}
+}
+setInterval(confereVersao, 5 * 60 * 1000);
+</script>
+</body>
+</html>
