@@ -1,0 +1,22 @@
+{
+  "_comentario": "TRECHO para colar dentro de \"rules\" (irmão de \"kanban\") — NÃO está mesclado no database.rules.json principal. Revise antes de publicar (firebase deploy --only database). Só e-mails em gree/permitidos/{email com . trocado por ,} entram; a ponte usa o Admin SDK (ignora regras). Cadastre quem pode: no Console, gree/permitidos/kicaio97@gmail,com = true.",
+  "gree": {
+    "permitidos": {
+      ".read": "auth != null && root.child('gree/permitidos/' + auth.token.email.toLowerCase().replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',')).exists()"
+    },
+    "aparelhos": {
+      ".read": "auth != null && root.child('gree/permitidos/' + auth.token.email.toLowerCase().replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',')).exists()"
+    },
+    "comandos": {
+      "$aparelho": {
+        "$id": {
+          ".write": "auth != null && !data.exists() && root.child('gree/permitidos/' + auth.token.email.toLowerCase().replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',')).exists()",
+          ".validate": "newData.hasChildren(['ts','quem','uid'])"
+        }
+      }
+    },
+    "historico": {
+      ".read": "auth != null && root.child('gree/permitidos/' + auth.token.email.toLowerCase().replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',')).exists()"
+    }
+  }
+}
