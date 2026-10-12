@@ -1,0 +1,10 @@
+# Segredos — NUNCA versionar
+service-account*.json
+*-firebase-adminsdk-*.json
+*adminsdk*.json
+.env
+.env.*
+config.json
+node_modules/
+__pycache__/
+.venv/
