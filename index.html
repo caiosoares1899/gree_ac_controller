@@ -3,98 +3,141 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#030d1a">
+<meta name="theme-color" content="#050d18">
 <title>Ar · Gree</title>
-<link rel="icon" href="favicon-oceano.png">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2338b6ff'/%3E%3Cpath d='M7 13h18M9 18c2 3 2 5 0 8M16 18c2 3 2 5 0 8M23 18c2 3 2 5 0 8' stroke='%23031a30' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
+@property --modo{syntax:'<color>';inherits:true;initial-value:#38b6ff}
 :root{
-  --deep:#030d1a; --glass:rgba(10,37,64,.6); --glass-border:rgba(56,182,255,.18); --glass-hover:rgba(56,182,255,.1);
-  --accent:#38b6ff; --cyan:#7ec8e3; --teal:#1de9b6; --txt:#e8f4fd; --txt2:rgba(200,230,255,.65); --warn:#ffd166; --danger:#ff6b6b;
-  --modo:#38b6ff;                       /* cor do modo atual (muda com o modo) */
+  --txt:#eaf4fd; --txt2:rgba(205,225,245,.58); --linha:rgba(255,255,255,.07);
+  --accent:#38b6ff; --warn:#ffd166; --danger:#ff6b6b;
+  --modo:#38b6ff;
+  --ease:cubic-bezier(.22,1,.36,1);
 }
 [hidden]{display:none!important}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%}
 body{font-family:'DM Sans',system-ui,sans-serif;color:var(--txt);min-height:100vh;
-  background:radial-gradient(ellipse at 20% 80%,rgba(0,80,160,.4) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(0,150,180,.25) 0%,transparent 55%),#010810;
-  background-attachment:fixed;display:flex;flex-direction:column;align-items:center;padding:max(16px,env(safe-area-inset-top)) 16px 40px}
-button{font:inherit;color:inherit;cursor:pointer}
-.topo{width:100%;max-width:420px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
-.topo h1{font:800 18px Syne,sans-serif;margin:0}
-.abas{display:flex;gap:6px;flex:1;justify-content:center}
-.aba{background:var(--glass);border:1px solid var(--glass-border);border-radius:999px;padding:6px 14px;backdrop-filter:blur(8px);font-size:13px;font-weight:500}
-.aba[aria-selected=true]{background:var(--glass-hover);border-color:var(--accent);color:var(--accent)}
-.chip{background:var(--glass);border:1px solid var(--glass-border);border-radius:999px;padding:6px 10px;font-size:12px;backdrop-filter:blur(8px);color:var(--txt2)}
-.card{position:relative;width:100%;max-width:420px;border-radius:26px;overflow:hidden;background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  box-shadow:0 20px 60px rgba(0,0,0,.45);padding:18px 18px 14px;transition:box-shadow .6s}
-.card[data-on="1"]{box-shadow:0 20px 60px rgba(0,0,0,.45),0 0 60px -10px color-mix(in srgb,var(--modo) 45%,transparent)}
-.card>*:not(canvas){position:relative;z-index:1}
-#fx-neve{position:absolute;inset:0;z-index:0;pointer-events:none;width:100%;height:100%}
+  background:radial-gradient(ellipse at 15% 90%,rgba(0,80,160,.38) 0%,transparent 60%),radial-gradient(ellipse at 85% 10%,rgba(0,150,180,.22) 0%,transparent 55%),#020a14;
+  background-attachment:fixed;display:flex;flex-direction:column;align-items:center;padding:max(14px,env(safe-area-inset-top)) 16px 40px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+svg.i{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+/* topo */
+.topo{width:100%;max-width:400px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.abas{display:flex;gap:2px;padding:3px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--linha);backdrop-filter:blur(10px)}
+.aba{padding:7px 18px;border-radius:999px;font-size:13.5px;font-weight:500;color:var(--txt2);transition:background .35s var(--ease),color .35s}
+.aba[aria-selected=true]{background:rgba(255,255,255,.12);color:var(--txt)}
+.eu{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.05);border:1px solid var(--linha);font-size:16px;color:var(--txt2)}
+
+/* cartão */
+.card{position:relative;width:100%;max-width:400px;border-radius:34px;padding:20px 20px 16px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(18,26,38,.86),rgba(10,16,26,.9));
+  border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.06);
+  transition:--modo .8s var(--ease),box-shadow .8s}
+.card::before{content:'';position:absolute;left:-20%;right:-20%;top:-30%;height:75%;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 60%,color-mix(in srgb,var(--modo) 22%,transparent),transparent 65%);opacity:0;transition:opacity .9s var(--ease)}
+.card[data-on="1"]::before{opacity:1}
+.card[data-turbo="1"]::before{opacity:1;animation:pulso 1.6s ease-in-out infinite}
+@keyframes pulso{50%{opacity:.55}}
+.card>*{position:relative}
+
 .cab{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.nome{font-weight:700;font-size:16px}.nome small{font-weight:400;color:var(--txt2);margin-left:6px;font-size:14px}
-.power{width:46px;height:46px;border-radius:50%;border:1px solid var(--glass-border);background:rgba(255,255,255,.06);display:grid;place-items:center;transition:.25s}
-.power svg{width:22px;height:22px;stroke:var(--txt2);fill:none;stroke-width:2.4;stroke-linecap:round}
-.card[data-on="1"] .power{background:var(--modo);border-color:var(--modo);box-shadow:0 0 22px color-mix(in srgb,var(--modo) 60%,transparent)}
-.card[data-on="1"] .power svg{stroke:#03203a}
-.cena{position:relative;height:250px;margin:6px -4px 0}
-.cena svg{position:absolute;left:0;top:0;width:100%;height:auto;overflow:visible}
+.nome{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:600}
+.nome svg{font-size:19px;color:var(--txt2)}
+.nome small{font-weight:400;color:var(--txt2);font-size:15px}
+.power{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.07);color:var(--txt2);transition:background .5s var(--ease),color .3s,box-shadow .5s,transform .2s}
+.power svg{font-size:23px;stroke-width:2.2}
+.power:active{transform:scale(.92)}
+.card[data-on="1"] .power{background:var(--modo);color:#04243c;box-shadow:0 0 0 6px color-mix(in srgb,var(--modo) 18%,transparent),0 8px 26px color-mix(in srgb,var(--modo) 55%,transparent)}
+
+.cena{position:relative;height:236px;margin:4px -6px 0}
+.cena svg.un{position:absolute;left:0;top:0;width:100%;height:auto;overflow:visible}
 #fx-ar{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
-.temp{display:flex;align-items:flex-start;font:800 64px/1 Syne,sans-serif;margin:2px 0 14px;min-height:64px}
-.temp sup{font:500 22px 'DM Sans';color:var(--txt2);margin:6px 0 0 4px}
-.temp.off{opacity:.35}
-.ajuste{display:flex;align-items:center;gap:10px}
-.bt{width:44px;height:44px;flex:none;border-radius:50%;border:1px solid var(--glass-border);background:rgba(255,255,255,.06);font-size:22px;display:grid;place-items:center}
-.bt:active{background:var(--glass-hover)}
-.slider{flex:1;position:relative}
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:48px;background:transparent;margin:0;touch-action:none}
-input[type=range]::-webkit-slider-runnable-track{height:48px;border-radius:24px;background:linear-gradient(90deg,color-mix(in srgb,var(--modo) 70%,#1d4ed8),var(--modo)) 0/var(--p,50%) 100% no-repeat,rgba(255,255,255,.07)}
-input[type=range]::-moz-range-track{height:48px;border-radius:24px;background:linear-gradient(90deg,color-mix(in srgb,var(--modo) 70%,#1d4ed8),var(--modo)) 0/var(--p,50%) 100% no-repeat,rgba(255,255,255,.07)}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:36px;height:36px;margin-top:6px;border-radius:50%;background:#f2f8ff;box-shadow:0 2px 10px rgba(0,0,0,.4)}
-input[type=range]::-moz-range-thumb{width:36px;height:36px;border:0;border-radius:50%;background:#f2f8ff;box-shadow:0 2px 10px rgba(0,0,0,.4)}
-.escala{display:flex;justify-content:space-between;font-size:11px;color:var(--txt2);margin:2px 56px 0}
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
-.tile{background:rgba(255,255,255,.05);border:1px solid var(--glass-border);border-radius:16px;padding:12px 10px;text-align:left;display:flex;flex-direction:column;gap:2px;min-height:78px;position:relative}
-.tile .ic{font-size:20px}.tile .lb{font-size:12px;color:var(--txt2)}.tile .vl{font-weight:700;font-size:14px}
-.tile:active{background:var(--glass-hover)}
-.tile[aria-pressed=true]{border-color:var(--modo)}
-.sw{position:absolute;right:10px;top:10px;width:44px;height:26px;border-radius:13px;background:rgba(255,255,255,.12);transition:.2s}
-.sw::after{content:'';position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#f2f8ff;transition:.2s}
-.tile[aria-pressed=true] .sw{background:var(--modo)}.tile[aria-pressed=true] .sw::after{left:21px}
-.rodape{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:13px;color:var(--txt2);gap:8px}
-.rodape button{background:none;border:0;padding:6px;color:var(--txt2)}
-.ultimo{width:100%;max-width:420px;margin-top:12px;text-align:center;font-size:13px;color:var(--txt2)}
-.ultimo button{background:none;border:0;color:var(--accent);text-decoration:underline;font-size:13px}
-.msg{width:100%;max-width:420px;text-align:center;margin-top:60px;line-height:1.5}
-.msg h2{font:800 22px Syne,sans-serif;margin:0 0 8px}
-.btn{background:var(--accent);color:#03203a;border:0;border-radius:999px;padding:12px 22px;font-weight:700;margin:6px}
-.btn.sec{background:var(--glass);color:var(--txt);border:1px solid var(--glass-border)}
-.ov{position:fixed;inset:0;background:rgba(1,8,16,.6);display:none;align-items:flex-end;justify-content:center;z-index:10;backdrop-filter:blur(4px)}
-.ov.on{display:flex}
-.sheet{width:100%;max-width:420px;background:rgba(10,37,64,.92);border:1px solid var(--glass-border);border-radius:24px 24px 0 0;padding:18px 16px max(20px,env(safe-area-inset-bottom));max-height:75vh;overflow:auto;backdrop-filter:blur(18px)}
-.sheet h3{font:800 16px Syne,sans-serif;margin:0 0 10px}
-.op{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;border-radius:12px;padding:12px 10px;font-size:15px}
-.op:hover,.op[aria-checked=true]{background:var(--glass-hover)}.op[aria-checked=true]{color:var(--accent);font-weight:700}
-.hist{display:flex;flex-direction:column;gap:2px;font-size:14px}
-.hist div{padding:8px 4px;border-bottom:1px solid var(--glass-border)}.hist small{color:var(--txt2);margin-left:6px}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--glass);border:1px solid var(--glass-border);border-radius:999px;padding:10px 18px;font-size:14px;backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:.25s;z-index:20}
-.toast.on{opacity:1}
-.version{margin-top:24px;font-size:11px;color:var(--txt2);opacity:.6}
-.upd{position:fixed;inset:0;z-index:30;background:rgba(1,8,16,.85);display:none;place-items:center;text-align:center;padding:24px}.upd.on{display:grid}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.temp{display:flex;align-items:flex-start;line-height:.9;margin:0 0 16px;min-height:64px;transition:opacity .5s}
+.temp .num{font-size:78px;font-weight:300;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.temp sup{font-size:22px;font-weight:400;color:var(--txt2);margin:8px 0 0 4px}
+.temp.off{opacity:.3}
+
+.ajuste{display:flex;align-items:center;gap:12px}
+.bt{width:44px;height:44px;flex:none;border-radius:50%;background:rgba(255,255,255,.07);display:grid;place-items:center;font-size:20px;transition:transform .2s,background .3s}
+.bt:active{transform:scale(.9);background:rgba(255,255,255,.14)}
+.slider{flex:1}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:56px;background:transparent;margin:0;touch-action:none;display:block}
+input[type=range]::-webkit-slider-runnable-track{height:56px;border-radius:28px;background:linear-gradient(90deg,color-mix(in srgb,var(--modo) 55%,#16409a),var(--modo)) 0/var(--p,50%) 100% no-repeat,rgba(255,255,255,.07)}
+input[type=range]::-moz-range-track{height:56px;border-radius:28px;background:linear-gradient(90deg,color-mix(in srgb,var(--modo) 55%,#16409a),var(--modo)) 0/var(--p,50%) 100% no-repeat,rgba(255,255,255,.07)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:42px;height:42px;margin-top:7px;border-radius:50%;background:#f4f9ff;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+input[type=range]::-moz-range-thumb{width:42px;height:42px;border:0;border-radius:50%;background:#f4f9ff;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+.escala{display:flex;justify-content:space-between;font-size:11px;color:var(--txt2);margin:3px 60px 0}
+
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.tile{background:rgba(255,255,255,.05);border-radius:22px;padding:14px 12px 13px;text-align:left;display:flex;flex-direction:column;gap:3px;min-height:92px;position:relative;
+  transition:transform .25s var(--ease),background .35s,box-shadow .35s}
+.tile:active{transform:scale(.96)}
+.tile .ic{font-size:23px;color:var(--txt2);margin-bottom:6px;transition:color .4s}
+.tile .lb{font-size:12px;color:var(--txt2)}
+.tile .vl{font-weight:600;font-size:14.5px}
+.tile[aria-pressed=true]{background:color-mix(in srgb,var(--modo) 16%,rgba(255,255,255,.04));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--modo) 45%,transparent)}
+.tile[aria-pressed=true] .ic,.tile.modo .ic{color:var(--modo)}
+.sw{position:absolute;right:12px;top:13px;width:42px;height:25px;border-radius:13px;background:rgba(255,255,255,.14);transition:background .35s}
+.sw::after{content:'';position:absolute;left:3px;top:3px;width:19px;height:19px;border-radius:50%;background:#f4f9ff;transition:transform .35s var(--ease)}
+.tile[aria-pressed=true] .sw{background:var(--modo)}
+.tile[aria-pressed=true] .sw::after{transform:translateX(17px)}
+
+.extras{display:flex;gap:8px;margin-top:10px}
+.pill{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 10px;border-radius:999px;background:rgba(255,255,255,.04);font-size:13.5px;color:var(--txt2);transition:background .3s,transform .2s}
+.pill:active{transform:scale(.97);background:rgba(255,255,255,.09)}
+.pill b{color:var(--txt);font-weight:600}
+.pill svg{font-size:16px}
+
+.rodape{display:flex;align-items:center;justify-content:space-between;margin-top:14px;font-size:13px;color:var(--txt2);min-height:30px}
+.rodape .st{display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:#1de9b6;box-shadow:0 0 8px #1de9b6}
+.dot.av{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);border-top-color:var(--txt);animation:gira .8s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+.rodape button{width:30px;height:30px;display:grid;place-items:center;color:var(--txt2);font-size:17px}
+
+.ultimo{width:100%;max-width:400px;margin-top:14px;text-align:center;font-size:13px;color:var(--txt2)}
+.msg{width:100%;max-width:400px;text-align:center;margin-top:70px;line-height:1.55;color:var(--txt2)}
+.msg h2{font:800 24px Syne,sans-serif;margin:0 0 10px;color:var(--txt)}
+.btn{background:var(--accent);color:#03203a;border-radius:999px;padding:13px 24px;font-weight:600;margin:6px}
+.btn.sec{background:rgba(255,255,255,.08);color:var(--txt)}
+
+/* gaveta */
+.ov{position:fixed;inset:0;background:rgba(1,8,16,.55);display:flex;align-items:flex-end;justify-content:center;z-index:10;backdrop-filter:blur(6px);
+  opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s}
+.ov.on{opacity:1;visibility:visible}
+.sheet{width:100%;max-width:400px;background:rgba(14,22,34,.95);border-radius:30px 30px 0 0;padding:20px 16px max(22px,env(safe-area-inset-bottom));max-height:75vh;overflow:auto;
+  transform:translateY(40px);transition:transform .45s var(--ease)}
+.ov.on .sheet{transform:none}
+.sheet h3{font-size:15px;font-weight:600;margin:0 0 8px 6px;color:var(--txt2)}
+.op{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border-radius:16px;padding:14px 12px;font-size:15.5px;transition:background .2s}
+.op svg{font-size:20px;color:var(--txt2)}
+.op:active,.op[aria-checked=true]{background:rgba(255,255,255,.08)}
+.op[aria-checked=true]{font-weight:600}.op[aria-checked=true] svg{color:var(--accent)}
+.hist{display:flex;flex-direction:column;font-size:14.5px}
+.hist div{padding:11px 6px;border-bottom:1px solid var(--linha)}.hist small{color:var(--txt2);margin-left:6px}
+.toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,10px);background:rgba(14,22,34,.95);border:1px solid var(--linha);border-radius:999px;padding:11px 20px;font-size:14px;opacity:0;pointer-events:none;transition:.35s var(--ease);z-index:20}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.version{margin-top:26px;font-size:11px;color:var(--txt2);opacity:.5}
+.upd{position:fixed;inset:0;z-index:30;background:rgba(1,8,16,.88);display:none;place-items:center;text-align:center;padding:24px}.upd.on{display:grid}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
 
 <div class="topo" id="topo" hidden>
-  <h1>🌬️ Ar</h1>
   <div class="abas" id="abas" role="tablist"></div>
-  <button class="chip" id="bt-sair" type="button" title="Sair">👤</button>
+  <button class="eu" id="bt-sair" type="button" title="Sair" aria-label="Sair">⏻</button>
 </div>
 
-<main id="app"></main>
+<main id="app" style="width:100%;display:flex;flex-direction:column;align-items:center"></main>
 <div class="ultimo" id="ultimo"></div>
-<div class="version">v0.1 · gree</div>
+<div class="version">v0.2 · gree</div>
 
 <div class="ov" id="ov"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -103,22 +146,38 @@ input[type=range]::-moz-range-thumb{width:36px;height:36px;border:0;border-radiu
 <script type="module">
 // O SDK do Firebase só é carregado fora do modo demonstração (a demo abre sem rede).
 const FB = 'https://www.gstatic.com/firebasejs/10.12.0/';
-
-const VERSION = 'v0.1 · gree', VERSION_KEY = 'gree';
+const VERSION = 'v0.2 · gree', VERSION_KEY = 'gree';
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const vibra = n => { try { navigator.vibrate && navigator.vibrate(n); } catch (e) {} };
 const toast = t => { const e = $('#toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => e.classList.remove('on'), 2400); };
 
-// ── Vocabulário (os mesmos valores que a ponte/gree-hvac-client usam) ──
-const MODOS = [['cool','❄️','Resfriar','#38b6ff'],['heat','🔥','Aquecer','#ff9a4d'],['dry','💧','Secar','#7ec8e3'],['fan_only','🌀','Ventilar','#cfe8fb'],['auto','✨','Auto','#1de9b6']];
+// ── Ícones (traço fino, herdam a cor) ──
+const IC = {
+  cool:'<path d="M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9"/><path d="M9.5 4.6 12 6.8l2.5-2.2M9.5 19.4 12 17.2l2.5 2.2M3.6 10.4l3.2-.7.7 3.2M20.4 10.4l-3.2-.7-.7 3.2"/>',
+  heat:'<path d="M12 21c3.9 0 6.5-2.5 6.5-6.2 0-2.7-1.6-4.6-3-6.1-.4 1.4-1.2 2.3-2.2 2.7.5-3.2-.8-6-3.4-8-.1 2.9-1.5 4.3-3 5.9-1.3 1.4-1.4 3-1.4 4.6C5.5 18.5 8.1 21 12 21z"/>',
+  dry:'<path d="M12 3.5s6 6 6 10.2a6 6 0 0 1-12 0C6 9.5 12 3.5 12 3.5z"/>',
+  fan_only:'<circle cx="12" cy="12" r="1.7"/><path d="M12 10.3C12 6.2 9.9 3.8 7.6 4.5c-1.9.6-1.5 3.3.4 4.8l4 1zM13.7 12c4.1 0 6.5 2.1 5.8 4.4-.6 1.9-3.3 1.5-4.8-.4l-1-4zM12 13.7c0 4.1-2.1 6.5-4.4 5.8-1.9-.6-1.5-3.3.4-4.8l4-1zM10.3 12C6.2 12 3.8 14.1 4.5 16.4c.6 1.9 3.3 1.5 4.8-.4l1-4z"/>',
+  auto:'<path d="M12 3.5l1.9 5.2 5.1 1.9-5.1 1.9L12 17.7l-1.9-5.2L5 10.6l5.1-1.9z"/><path d="M18.5 16.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
+  wind:'<path d="M3 8.5h10.5a2.7 2.7 0 1 0-2.7-2.7M3 12.5h15.5a2.7 2.7 0 1 1-2.7 2.7M3 16.5h7a2.4 2.4 0 1 1-2.4 2.4"/>',
+  fan:'<path d="M12 3.5v7M12 13.5v7M8 6.5l4-3 4 3M8 17.5l4 3 4-3"/>',
+  swing:'<path d="M12 4v16M8 8l4-4 4 4M8 16l4 4 4-4"/>',
+  clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  therm:'<path d="M10 14.5V5a2 2 0 1 1 4 0v9.5a4 4 0 1 1-4 0z"/>',
+  power:'<path d="M12 3.5v8M7 6.8a7.5 7.5 0 1 0 10 0"/>',
+  refresh:'<path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4.5h-4.5"/>',
+};
+const ico = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${IC[n] || ''}</svg>`;
+
+// ── Vocabulário (os mesmos valores que a ponte/serviço usam) ──
+const MODOS = [['cool','Resfriar','#4db8ff'],['heat','Aquecer','#ff9a55'],['dry','Secar','#6fd6e8'],['fan_only','Ventilar','#d3e6f7'],['auto','Auto','#2de3b4']];
 const VENTS = [['auto','Auto',.55],['low','Baixa',.25],['mediumLow','Média-baixa',.4],['medium','Média',.6],['mediumHigh','Média-alta',.8],['high','Alta',1]];
 // ar: de 0 (horizontal, "pra frente") a 1 (reto pra baixo)
 const ALETAS = [['default','Padrão',.5],['full','Oscilar',null],['fixedTop','Alto',.1],['fixedMidTop','Meio-alto',.3],['fixedMid','Meio',.5],['fixedMidBottom','Meio-baixo',.75],['fixedBottom','Baixo',1]];
 const find = (arr, k) => arr.find(x => x[0] === k) || arr[0];
 
-// ── Backend: Firebase (ponte em casa) ou demonstração (tudo local) ──
+// ── Backend: Firebase (serviço na nuvem) ou demonstração (tudo local) ──
 const SIM = new URLSearchParams(location.search).has('sim') || localStorage.getItem('gree_sim') === '1';
 let backend, usuario = null;
 
@@ -132,7 +191,7 @@ function backendSim() {
   return {
     ouvir: f => { cb = f; setTimeout(emit, 50); },
     historico: (id, f) => { hcb[id] = f; f(hist[id].slice().reverse()); },
-    enviar: (id, patch) => new Promise(res => setTimeout(() => {          // finge o vai-e-vem da ponte (~400ms)
+    enviar: (id, patch) => new Promise(res => setTimeout(() => {          // finge o vai-e-vem do serviço (~400ms)
       for (const [k, v] of Object.entries(patch)) { hist[id].push({ campo:k, para:v, quem:'Você (demo)', ts:Date.now() }); ap[id].estado[k] = v; }
       emit(); res();
     }, 400)),
@@ -162,7 +221,7 @@ async function backendFirebase() {
 
 // ── Estado da tela ──
 let aparelhos = {}, ativo = null, otimista = {};   // otimista[id][campo] = {v, ate}
-let sheetHist = null;
+let sheetHist = null, tempMostrada = null;
 const estadoDe = id => {
   const e = { ...((aparelhos[id] || {}).estado || {}) }, o = otimista[id] || {}, t = Date.now();
   for (const k in o) { if (o[k].ate > t) e[k] = o[k].v; else delete o[k]; }
@@ -178,103 +237,148 @@ function aplica(id, patch) {
     () => { enviando[id]--; otimista[id] = {}; render(); toast('⚠️ Não deu pra enviar — confere a conexão.'); });
 }
 
-// ── Cena: unidade + aleta + partículas de ar + neve ──
-const fx = { ar: [], neve: [], fluxo: .5, vel: 1, dens: 0, modo: 'cool', ligado: false, aleta: .5, oscila: false, fase: 0, turbo: false, acc: 0 };
+// ── Cena: aparelho + aleta + ar ──
+// ligado/modo/dens/turbo vêm do estado; o resto é suavizado quadro a quadro (nada "pula").
+const fx = { ar: [], gelo: [], ligado: false, modo: 'cool', dens: .55, turbo: false, aleta: .5, aletaAtual: .5, oscila: false, fase: 0,
+  rAtual: 0, tAtual: 0, gAtual: 0, acc: 0, accG: 0 };
+const COR = { cool:'205,230,255', heat:'255,188,135', dry:'195,235,247', fan_only:'238,245,252', auto:'175,247,228' };
+
 const cena = () => `
-<svg viewBox="0 0 360 120" aria-hidden="true">
-  <defs><linearGradient id="gu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#e3edf7"/><stop offset="1" stop-color="#b9c9db"/></linearGradient></defs>
-  <rect x="30" y="14" width="300" height="66" rx="22" fill="url(#gu)"/>
-  <rect x="42" y="64" width="276" height="9" rx="4.5" fill="#0b1626"/>
-  <polygon id="aleta" points="44,68 316,68 312,70 48,70" fill="#dbe6f2"/>
-  <text id="disp" x="262" y="40" font-family="Syne,sans-serif" font-weight="700" font-size="14" fill="#38b6ff" text-anchor="middle"></text>
-  <circle cx="82" cy="40" r="2" fill="#9fb2c6"/>
+<svg class="un" viewBox="0 0 360 120" aria-hidden="true">
+  <defs>
+    <linearGradient id="gu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#e8f0f8"/><stop offset="1" stop-color="#bccbdb"/></linearGradient>
+    <linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef4fa"/><stop offset="1" stop-color="#aebdcf"/></linearGradient>
+    <filter id="sb" x="-10%" y="-10%" width="120%" height="140%"><feGaussianBlur stdDeviation="7"/></filter>
+  </defs>
+  <g id="unit">
+    <ellipse cx="180" cy="88" rx="140" ry="9" fill="#000" opacity=".35" filter="url(#sb)"/>
+    <rect x="28" y="12" width="304" height="68" rx="24" fill="url(#gu)"/>
+    <rect x="42" y="64" width="276" height="10" rx="5" fill="#0a1422"/>
+    <path id="aleta" d="M44 70h272l-4 2H48z" fill="url(#ga)"/>
+    <text id="disp" x="262" y="40" font-family="DM Sans,sans-serif" font-weight="600" font-size="14" fill="#2aa8f0" text-anchor="middle"></text>
+    <circle id="led" cx="262" cy="49" r="1.6" fill="#2aa8f0"/><circle cx="84" cy="40" r="2" fill="#a5b6c9"/>
+  </g>
 </svg>
 <canvas id="fx-ar"></canvas>`;
 
-function ajustaCanvas(c) { const r = c.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2); c.width = r.width * d; c.height = r.height * d; return d; }
+const tam = new WeakMap();
+function ajusta(c) { const r = c.getBoundingClientRect(), k = r.width + 'x' + r.height; if (tam.get(c) !== k) { tam.set(c, k); const d = Math.min(devicePixelRatio || 1, 2); c.width = r.width * d; c.height = r.height * d; } }
+const rnd = (a, b) => a + Math.random() * (b - a);
+const suave = (v, alvo, dt, k) => v + (alvo - v) * Math.min(1, dt * k);
 
 let ultimoT = 0;
 function quadro(t) {
   const dt = Math.min((t - ultimoT) / 1000 || .016, .05); ultimoT = t; requestAnimationFrame(quadro);
-  const cAr = $('#fx-ar'), cNeve = $('#fx-neve');
-  if (fx.oscila) fx.fase += dt * (fx.turbo ? 1.6 : .9);
-  const a = fx.oscila ? .1 + .9 * (.5 + .5 * Math.sin(fx.fase)) : fx.aleta;     // posição REAL da aleta (0 = horizontal, 1 = reto pra baixo)
-  const al = $('#aleta'); if (al) { const h = 2 + a * 20; al.setAttribute('points', `44,68 316,68 ${312 + a * 2},${68 + h} ${48 - a * 2},${68 + h}`); }
+  const cv = $('#fx-ar'); if (!cv) return;
+  const lig = fx.ligado;
+  fx.tAtual = suave(fx.tAtual, fx.turbo && lig ? 1 : 0, dt, 2.2);                     // 0..1: quanto o turbo "pegou"
+  fx.rAtual = suave(fx.rAtual, lig ? 1 : 0, dt, 2.6);                                  // liga/desliga suave
+  fx.gAtual = suave(fx.gAtual, lig ? 1 : 0, dt, 1.6);
+  const T = fx.tAtual, lvl = fx.dens;
 
-  if (cAr) {
-    const d = ajustaCanvasCached(cAr), W = cAr.width, H = cAr.height, g = cAr.getContext('2d'), s = W / 360;
-    g.clearRect(0, 0, W, H);
-    // emissão: densidade e velocidade seguem a ventilação (turbo = rajada)
-    const alvoD = fx.ligado ? (fx.dens * (fx.turbo ? 1.9 : 1)) : 0, alvoV = fx.vel * (fx.turbo ? 1.7 : 1);
-    fx.dAtual = (fx.dAtual || 0) + (alvoD - (fx.dAtual || 0)) * Math.min(1, dt * 3);
-    fx.vAtual = (fx.vAtual || 0) + (alvoV - (fx.vAtual || 0)) * Math.min(1, dt * 3);
-    fx.acc += dt * 70 * fx.dAtual * (reduz ? .4 : 1);
-    while (fx.acc >= 1 && fx.ar.length < 260) {
-      fx.acc--;
-      const x = 52 + Math.random() * 256, spread = (1 - a) * .9;      // aleta alta: o ar abre pra frente; baixa: cai reto
-      fx.ar.push({ x, y: 76 + a * 18, vx: (x - 180) / 180 * spread * 40 + (Math.random() - .5) * 14 * spread,
-        vy: (55 + 90 * (.4 + a * .6)) * (.8 + Math.random() * .4), l: 0, vida: (.9 + Math.random() * .8) * (1.2 - (1 - a) * .4), w: .8 + Math.random() * 1.1, dx: Math.random() * 6.28 });
-    }
-    const cor = { cool:'150,215,255', heat:'255,170,100', dry:'170,225,240', fan_only:'225,240,255', auto:'120,240,205' }[fx.modo] || '150,215,255';
-    for (let i = fx.ar.length - 1; i >= 0; i--) {
-      const p = fx.ar[i]; p.l += dt; if (p.l > p.vida || p.y > 250) { fx.ar.splice(i, 1); continue; }
-      const v = fx.vAtual; p.x += (p.vx + Math.sin(p.l * 5 + p.dx) * 6) * dt * v; p.y += p.vy * dt * v;
-      const k = 1 - p.l / p.vida, comp = (6 + 16 * v) * p.w;
-      g.strokeStyle = `rgba(${cor},${.5 * k})`; g.lineWidth = p.w * s * (fx.turbo ? 1.3 : 1); g.lineCap = 'round';
-      g.beginPath(); g.moveTo(p.x * s, p.y * s); g.lineTo((p.x - p.vx * dt * comp * .15) * s, (p.y - comp) * s); g.stroke();
-    }
+  // aleta: vai até a posição pedida com suavidade (e oscila de verdade no modo "Oscilar")
+  if (fx.oscila) fx.fase += dt * (.9 + .8 * T);
+  const alvoA = fx.oscila ? .1 + .9 * (.5 + .5 * Math.sin(fx.fase)) : fx.aleta;
+  fx.aletaAtual = suave(fx.aletaAtual, alvoA, dt, fx.oscila ? 30 : 5);
+  const a = fx.aletaAtual, al = $('#aleta');
+  if (al) { const h = 2 + a * 17; al.setAttribute('d', `M44 70h272l${-4 - a * 3} ${h}H${48 + a * 3}z`); }
+  const un = $('#unit'); if (un) un.setAttribute('transform', T > .02 ? `translate(${(Math.sin(t / 13) * .7 * T).toFixed(2)} ${(Math.cos(t / 9) * .5 * T).toFixed(2)})` : '');
+
+  ajusta(cv);
+  const W = cv.width, H = cv.height, g = cv.getContext('2d'), s = W / 360;
+  g.clearRect(0, 0, W, H);
+  const cor = COR[fx.modo] || COR.cool, oy = 76 + a * 14;
+
+  // brilho suave embaixo do aparelho (a cor do modo)
+  if (fx.gAtual > .01) {
+    // só abaixo da boca do aparelho e com raio menor que a distância até as bordas do canvas — senão aparece um retângulo
+    const gr = g.createRadialGradient(180 * s, oy * s, 0, 180 * s, oy * s, 118 * s);
+    gr.addColorStop(0, `rgba(${cor},${(.13 + .1 * T) * fx.gAtual})`); gr.addColorStop(1, `rgba(${cor},0)`);
+    g.fillStyle = gr; g.fillRect(0, oy * s, W, H - oy * s);
   }
-  if (cNeve) {
-    ajustaCanvasCached(cNeve); const W = cNeve.width, H = cNeve.height, g = cNeve.getContext('2d'), d = W / cNeve.getBoundingClientRect().width || 1;
-    g.clearRect(0, 0, W, H);
-    const inverno = fx.ligado && fx.modo === 'heat' && !reduz;
-    if (inverno && fx.neve.length < 70 && Math.random() < dt * 30) fx.neve.push({ x: Math.random() * W, y: -10, r: (1.2 + Math.random() * 2.6) * d, vy: (14 + Math.random() * 26) * d, ph: Math.random() * 6.28 });
-    for (let i = fx.neve.length - 1; i >= 0; i--) {
-      const f = fx.neve[i]; f.y += f.vy * dt * (fx.turbo ? 1.8 : 1); f.x += Math.sin(t / 900 + f.ph) * 14 * dt * d;
-      if (f.y > H + 10) { fx.neve.splice(i, 1); continue; }
-      g.fillStyle = 'rgba(235,245,255,.75)'; g.beginPath(); g.arc(f.x, f.y, f.r, 0, 6.283); g.fill();
-    }
-    if (!inverno && fx.neve.length) fx.neve.length = Math.max(0, fx.neve.length - 1);
+
+  // ── linhas de ar: finas, longas, em cortina. Mais ventilação = mais, mais rápidas, mais compridas. Turbo = rajada. ──
+  fx.acc += dt * (30 + 150 * lvl) * (1 + 1.7 * T) * fx.rAtual * (reduz ? .35 : 1);
+  const meia = 112 + 30 * T;
+  while (fx.acc >= 1 && fx.ar.length < 420) {
+    fx.acc--;
+    const x = 180 + rnd(-meia, meia), abre = (1 - a) * .9 + .22 + .35 * T;
+    fx.ar.push({ x, y: oy, ph: rnd(0, 6.28), l: 0, vida: rnd(1.1, 1.9) * (1.12 - lvl * .15),
+      vx: (x - 180) / 120 * abre * (30 + 36 * T) + rnd(-6, 6) * (1 + T),
+      vy: (105 + 110 * lvl) * (1 + .75 * T) * rnd(.8, 1.2) * (.55 + .45 * a),
+      len: (24 + 52 * lvl) * (1 + .65 * T) * rnd(.7, 1.3), w: rnd(.55, 1.15), amp: (3 + 9 * T) });
+  }
+  g.lineCap = 'round';
+  for (let i = fx.ar.length - 1; i >= 0; i--) {
+    const p = fx.ar[i]; p.l += dt;
+    if (p.l > p.vida || p.y * s > H) { fx.ar.splice(i, 1); continue; }
+    p.x += (p.vx + Math.sin(p.l * 4.5 + p.ph) * p.amp) * dt; p.y += p.vy * dt;
+    const k = Math.sin(Math.PI * Math.min(1, p.l / p.vida)), al2 = (.28 + .3 * lvl + .22 * T) * Math.pow(k, .8);
+    const m = Math.hypot(p.vx, p.vy) || 1, tx = p.x - p.vx / m * p.len, ty = p.y - p.vy / m * p.len;
+    const gr = g.createLinearGradient(tx * s, ty * s, p.x * s, p.y * s);
+    gr.addColorStop(0, `rgba(${cor},0)`); gr.addColorStop(1, `rgba(${cor},${al2.toFixed(3)})`);
+    g.strokeStyle = gr; g.lineWidth = p.w * s * (1 + .5 * T);
+    g.beginPath(); g.moveTo(tx * s, ty * s); g.lineTo(p.x * s, p.y * s); g.stroke();
+  }
+
+  // ── detalhes do modo: gelinho no frio, gotinhas no secar (aquecer não nevoa — só esquenta a cor) ──
+  const frio = fx.modo === 'cool', seca = fx.modo === 'dry';
+  if ((frio || seca) && !reduz) {
+    fx.accG += dt * (frio ? 5 + 7 * lvl : 6) * (1 + T) * fx.rAtual;
+    while (fx.accG >= 1 && fx.gelo.length < 60) { fx.accG--; fx.gelo.push({ x: 180 + rnd(-100, 100), y: oy + rnd(0, 6), l: 0, vida: rnd(2.4, 4), r: rnd(.9, 2.2), ph: rnd(0, 6.28), vy: seca ? rnd(70, 120) : rnd(26, 58), tipo: seca ? 1 : 0 }); }
+  }
+  for (let i = fx.gelo.length - 1; i >= 0; i--) {
+    const f = fx.gelo[i]; f.l += dt;
+    if (f.l > f.vida || f.y * s > H) { fx.gelo.splice(i, 1); continue; }
+    f.y += f.vy * dt * (1 + .5 * T); f.x += Math.sin(f.l * 2 + f.ph) * (f.tipo ? 2 : 14) * dt;
+    const al3 = .85 * Math.sin(Math.PI * Math.min(1, f.l / f.vida));
+    if (f.tipo) { g.fillStyle = `rgba(170,228,245,${al3 * .8})`; g.beginPath(); g.ellipse(f.x * s, f.y * s, f.r * .7 * s, f.r * 1.5 * s, 0, 0, 6.283); g.fill(); }
+    else { g.fillStyle = `rgba(240,249,255,${al3})`; g.beginPath(); g.arc(f.x * s, f.y * s, f.r * s, 0, 6.283); g.fill(); }
   }
 }
-const tam = new WeakMap();
-function ajustaCanvasCached(c) { const r = c.getBoundingClientRect(), k = r.width + 'x' + r.height; if (tam.get(c) !== k) { tam.set(c, k); ajustaCanvas(c); } return 1; }
 
 // ── Render ──
+function tweenTemp(el, para) {
+  const de = tempMostrada == null ? para : tempMostrada; tempMostrada = para;
+  if (de === para || reduz) { el.textContent = para; return; }
+  const t0 = performance.now();
+  (function passo(n) { const k = Math.min(1, (n - t0) / 320); el.textContent = Math.round(de + (para - de) * (1 - Math.pow(1 - k, 3))); if (k < 1 && tempMostrada === para) requestAnimationFrame(passo); })(t0);
+}
+
 function render() {
   const ids = Object.keys(aparelhos);
-  if (!ids.length) { $('#app').innerHTML = '<div class="msg"><h2>🐟 Nenhum aparelho por aqui</h2><p>A ponte ainda não publicou nada. Confere se ela está rodando no PC de casa.</p></div>'; return; }
+  if (!ids.length) { $('#app').innerHTML = '<div class="msg"><h2>🐟 Nenhum aparelho por aqui</h2><p>O serviço ainda não publicou nada. Confere se ele está rodando.</p></div>'; return; }
   if (!ativo || !aparelhos[ativo]) ativo = ids[0];
   $('#topo').hidden = false;
   $('#abas').innerHTML = ids.length > 1 ? ids.map(id => `<button class="aba" role="tab" data-aba="${esc(id)}" aria-selected="${id === ativo}">${esc(aparelhos[id].nome || id)}</button>`).join('') : '';
   const ap = aparelhos[ativo], e = estadoDe(ativo), ligado = e.power === 'on', m = find(MODOS, e.mode), v = find(VENTS, e.fanSpeed), al = find(ALETAS, e.swingVert), turbo = e.turbo === 'on';
   const temp = Math.round(+e.temperature) || 24;
-  fx.modo = m[0]; fx.ligado = ligado; fx.dens = v[2]; fx.vel = .6 + v[2] * .8; fx.turbo = turbo; fx.oscila = al[2] === null; fx.aleta = al[2] == null ? .5 : al[2];
-  const card = $('#card');
-  const novo = !card || card.dataset.id !== ativo;
-  if (novo) {
-    $('#app').innerHTML = `<section class="card" id="card" data-id="${esc(ativo)}"><canvas id="fx-neve"></canvas>
-      <div class="cab"><div class="nome" id="c-nome"></div><button class="power" id="c-power" aria-label="Ligar/desligar"><svg viewBox="0 0 24 24"><path d="M12 3v8M6.4 6.6a8 8 0 1 0 11.2 0"/></svg></button></div>
+  fx.modo = m[0]; fx.ligado = ligado; fx.dens = v[2]; fx.turbo = turbo; fx.oscila = al[2] === null; fx.aleta = al[2] == null ? .5 : al[2];
+  if (!$('#card') || $('#card').dataset.id !== ativo) {
+    tempMostrada = null; fx.ar = []; fx.gelo = [];
+    $('#app').innerHTML = `<section class="card" id="card" data-id="${esc(ativo)}">
+      <div class="cab"><div class="nome">${ico('therm')}<span id="c-nome"></span></div><button class="power" id="c-power" aria-label="Ligar/desligar">${ico('power')}</button></div>
       <div class="cena">${cena()}</div>
-      <div class="temp" id="c-temp"></div>
+      <div class="temp" id="c-temp"><span class="num" id="c-num">24</span><sup>°C</sup></div>
       <div class="ajuste"><button class="bt" id="c-menos" aria-label="Diminuir">−</button><div class="slider"><input type="range" id="c-range" min="16" max="30" step="1" aria-label="Temperatura"></div><button class="bt" id="c-mais" aria-label="Aumentar">+</button></div>
       <div class="escala"><span>16°</span><span>30°</span></div>
-      <div class="tiles"><button class="tile" data-sheet="mode"><span class="ic" id="t-mi"></span><span class="lb">Modo</span><span class="vl" id="t-mv"></span></button>
-        <button class="tile" data-sheet="fan"><span class="ic">🌀</span><span class="lb">Ventilação</span><span class="vl" id="t-fv"></span></button>
-        <button class="tile" id="t-turbo" aria-pressed="false"><span class="ic">💨</span><span class="lb">Turbo</span><span class="vl" id="t-tv"></span><i class="sw"></i></button></div>
-      <div class="tiles" style="margin-top:8px;grid-template-columns:1fr 1fr"><button class="tile" data-sheet="swing" style="min-height:64px"><span class="lb">↕️ Aleta</span><span class="vl" id="t-sv"></span></button>
-        <button class="tile" id="t-hist" style="min-height:64px"><span class="lb">🕐 Histórico</span><span class="vl">Quem mexeu</span></button></div>
-      <div class="rodape"><span id="c-status"></span><button id="c-ref" aria-label="Atualizar">⟳</button></div></section>`;
+      <div class="tiles">
+        <button class="tile modo" data-sheet="mode"><span class="ic" id="t-mi"></span><span class="lb">Modo</span><span class="vl" id="t-mv"></span></button>
+        <button class="tile" data-sheet="fan"><span class="ic">${ico('fan_only')}</span><span class="lb">Ventilação</span><span class="vl" id="t-fv"></span></button>
+        <button class="tile" id="t-turbo" aria-pressed="false"><span class="ic">${ico('wind')}</span><span class="lb">Turbo</span><span class="vl" id="t-tv"></span><i class="sw"></i></button>
+      </div>
+      <div class="extras"><button class="pill" data-sheet="swing">${ico('swing')}<span>Aleta <b id="t-sv"></b></span></button><button class="pill" id="t-hist">${ico('clock')}<span>Quem mexeu</span></button></div>
+      <div class="rodape"><span class="st" id="c-status"></span><button id="c-ref" aria-label="Atualizar">${ico('refresh')}</button></div></section>`;
   }
-  const c = $('#card'); c.dataset.on = ligado ? 1 : 0; c.style.setProperty('--modo', m[3]);
-  $('#c-nome').innerHTML = `${esc(ap.nome || ativo)}<small>${e.currentTemperature != null ? Math.round(e.currentTemperature) + '°C' : ''}</small>`;
-  const tEl = $('#c-temp'); tEl.className = 'temp' + (ligado ? '' : ' off'); tEl.innerHTML = `${temp}<sup>°C</sup>`;
+  const c = $('#card'); c.dataset.on = ligado ? 1 : 0; c.dataset.turbo = ligado && turbo ? 1 : 0; c.style.setProperty('--modo', m[2]);
+  $('#c-nome').innerHTML = `${esc(ap.nome || ativo)} <small>${e.currentTemperature != null ? Math.round(e.currentTemperature) + '°C' : ''}</small>`;
+  $('#c-temp').className = 'temp' + (ligado ? '' : ' off'); tweenTemp($('#c-num'), temp);
   const rg = $('#c-range'); if (document.activeElement !== rg) rg.value = temp; rg.style.setProperty('--p', ((temp - 16) / 14 * 100) + '%');
-  const dp = $('#disp'); if (dp) dp.textContent = ligado ? temp : '';
-  $('#t-mi').textContent = m[1]; $('#t-mv').textContent = m[2]; $('#t-fv').textContent = v[1]; $('#t-sv').textContent = al[1];
+  const dp = $('#disp'); if (dp) dp.textContent = ligado ? temp : '', $('#led') && $('#led').setAttribute('opacity', ligado ? 1 : 0);
+  $('#t-mi').innerHTML = ico(m[0]); $('#t-mv').textContent = m[1]; $('#t-fv').textContent = v[1]; $('#t-sv').textContent = al[1];
   $('#t-tv').textContent = turbo ? 'Ligado' : 'Desligado'; $('#t-turbo').setAttribute('aria-pressed', turbo);
-  $('#c-status').textContent = ap.online === false ? '⚠️ Sem resposta do aparelho' : enviando[ativo] > 0 ? '⏳ Enviando…' : '✅ Sincronizado';
-  if (!ap.online && ap.online !== undefined) c.style.opacity = .85; else c.style.opacity = 1;
+  $('#c-status').innerHTML = ap.online === false ? '<i class="dot av"></i>Sem resposta do aparelho' : enviando[ativo] > 0 ? '<i class="spin"></i>Enviando…' : '<i class="dot"></i>Sincronizado';
+  c.style.opacity = ap.online === false ? .85 : 1;
   if (sheetHist) montaHist();
 }
 
@@ -302,19 +406,23 @@ document.addEventListener('click', ev => {
 });
 document.addEventListener('input', ev => { if (ev.target.id === 'c-range') setTemp(+ev.target.value); });
 $('#ov').addEventListener('click', ev => { if (ev.target.id === 'ov') fecha(); });
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape') fecha(); });
 function fecha() { sheetHist = null; $('#ov').classList.remove('on'); }
 function abreSheet(tipo) {
-  const e = estadoDe(ativo), cfg = { mode: ['Modo', 'mode', MODOS.map(x => [x[0], x[1] + ' ' + x[2]])], fan: ['Ventilação', 'fanSpeed', VENTS.map(x => [x[0], x[1]])], swing: ['Aleta (direção do ar)', 'swingVert', ALETAS.map(x => [x[0], x[1]])] }[tipo];
-  $('#sheet').innerHTML = `<h3>${cfg[0]}</h3>` + cfg[2].map(o => `<button class="op" role="radio" aria-checked="${e[cfg[1]] === o[0]}" data-k="${cfg[1]}" data-v="${o[0]}">${o[1]}</button>`).join('');
+  const e = estadoDe(ativo), cfg = {
+    mode: ['Modo', 'mode', MODOS.map(x => [x[0], x[1], ico(x[0])])],
+    fan: ['Ventilação', 'fanSpeed', VENTS.map(x => [x[0], x[1], ico('fan_only')])],
+    swing: ['Aleta — direção do ar', 'swingVert', ALETAS.map(x => [x[0], x[1], ico('swing')])] }[tipo];
+  $('#sheet').innerHTML = `<h3>${cfg[0]}</h3>` + cfg[2].map(o => `<button class="op" role="radio" aria-checked="${e[cfg[1]] === o[0]}" data-k="${cfg[1]}" data-v="${o[0]}">${o[2]}<span>${o[1]}</span></button>`).join('');
   $('#ov').classList.add('on');
 }
 function abreHist() { sheetHist = []; $('#ov').classList.add('on'); montaHist(); }
-const NOME_CAMPO = { power: v => v === 'on' ? 'ligou' : 'desligou', temperature: v => `pôs ${v}°`, mode: v => 'mudou pra ' + find(MODOS, v)[2], fanSpeed: v => 'ventilação ' + find(VENTS, v)[1].toLowerCase(), turbo: v => v === 'on' ? 'ligou o turbo' : 'desligou o turbo', swingVert: v => 'aleta: ' + find(ALETAS, v)[1].toLowerCase(), quiet: v => 'silencioso ' + v, lights: v => 'luz do painel ' + (v === 'on' ? 'ligada' : 'apagada') };
+const NOME_CAMPO = { power: v => v === 'on' ? 'ligou' : 'desligou', temperature: v => `pôs ${v}°`, mode: v => 'mudou pra ' + find(MODOS, v)[1], fanSpeed: v => 'ventilação ' + find(VENTS, v)[1].toLowerCase(), turbo: v => v === 'on' ? 'ligou o turbo' : 'desligou o turbo', swingVert: v => 'aleta: ' + find(ALETAS, v)[1].toLowerCase(), quiet: v => 'silencioso ' + v, lights: v => 'luz do painel ' + (v === 'on' ? 'ligada' : 'apagada') };
 const quando = ts => { const m = Math.round((Date.now() - ts) / 60000); return m < 1 ? 'agora' : m < 60 ? `há ${m} min` : m < 1440 ? `há ${Math.round(m / 60)} h` : new Date(ts).toLocaleDateString('pt-BR'); };
 const frase = h => `<b>${esc(h.quem || '?')}</b> ${(NOME_CAMPO[h.campo] || (() => 'mexeu em ' + esc(h.campo)))(h.para)}`;
 function montaHist() {
   const l = histCache[ativo] || [];
-  $('#sheet').innerHTML = '<h3>🕐 Quem mexeu</h3><div class="hist">' + (l.length ? l.map(h => `<div>${frase(h)}<small>${quando(h.ts)}</small></div>`).join('') : '<p style="color:var(--txt2)">Ainda sem registros por aqui.</p>') + '</div>';
+  $('#sheet').innerHTML = '<h3>Quem mexeu</h3><div class="hist">' + (l.length ? l.map(h => `<div>${frase(h)}<small>${quando(h.ts)}</small></div>`).join('') : '<p style="color:var(--txt2);margin:8px 6px">Ainda sem registros por aqui.</p>') + '</div>';
 }
 const histCache = {}, histOuvindo = {};
 function ouveHist(id) {
