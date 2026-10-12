@@ -8,7 +8,7 @@ PWA (index.html, GitHub Pages)  ⇄  Firebase RTDB  ⇄  bridge/ (Node, no PC de
 
 - **`index.html`** — a página (instalável na tela inicial, iOS e Android). Visual "Marine Glass": aleta que mostra a posição real, ar que acompanha a ventilação, rajada no turbo, neve no modo Aquecer, histórico de quem mexeu. Abra com `?sim=1` pra ver a **demonstração** (sem Firebase, sem ponte).
 - **`bridge/`** — a ponte que roda no PC (sempre ligado). Fala com os aparelhos por UDP usando [`gree-hvac-client`](https://www.npmjs.com/package/gree-hvac-client) e sincroniza com o Firebase.
-- **`bridge/database.rules.gree.json`** — regras do Realtime Database (só e-mails em `gree/permitidos`). **Revisar antes de publicar** — não estão mescladas em nenhum arquivo de regras.
+- **`database.rules.json`** — regras do Realtime Database (só e-mails em `gree/permitidos`). Cole em Realtime Database → Regras → Publicar.
 
 ## Status
 

@@ -1,0 +1,25 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "gree": {
+      "permitidos": {
+        ".read": "auth != null && root.child('gree/permitidos/' + auth.token.email.toLowerCase().replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',')).exists()"
+      },
+      "aparelhos": {
+        ".read": "auth != null && root.child('gree/permitidos/' + auth.token.email.toLowerCase().replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',')).exists()"
+      },
+      "comandos": {
+        "$aparelho": {
+          "$id": {
+            ".write": "auth != null && root.child('gree/permitidos/' + auth.token.email.toLowerCase().replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',')).exists() && !data.exists()",
+            ".validate": "newData.hasChildren(['ts','quem','uid'])"
+          }
+        }
+      },
+      "historico": {
+        ".read": "auth != null && root.child('gree/permitidos/' + auth.token.email.toLowerCase().replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',')).exists()"
+      }
+    }
+  }
+}
