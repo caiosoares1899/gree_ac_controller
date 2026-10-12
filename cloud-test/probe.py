@@ -4,7 +4,7 @@ Não envia nenhum comando e não imprime a chave de criptografia.
 Uso (ex.: no Google Colab):
     !pip install -q "greeclimate-davo22 @ git+https://github.com/davo22/greeclimate.git@2.3.0"
     GREE_USER=... GREE_PASS=... GREE_SERVER="South American" python probe.py
-Se der erro de região, rode com GREE_SERVER=list pra ver os nomes válidos.
+Use GREE_SERVER=all pra tentar todas as regiões, ou GREE_SERVER=list pra ver os nomes válidos.
 """
 import asyncio
 import os
@@ -24,10 +24,26 @@ async def main():
     if not USER or not PASS:
         sys.exit("Defina GREE_USER e GREE_PASS.")
 
-    disc = CloudDiscovery(username=USER, password=PASS, server=SERVER)
+    # GREE_SERVER=all  -> tenta cada região até uma aceitar o login (a conta só existe numa delas)
+    servidores = list(CloudDiscovery.list_servers()) if SERVER == "all" else [SERVER]
+    disc, devices, usado = None, None, None
+    for srv in servidores:
+        d_try = CloudDiscovery(username=USER, password=PASS, server=srv)
+        try:
+            devices = await d_try.scan()
+            disc, usado = d_try, srv
+            break
+        except Exception as e:
+            print(f"[{srv}] não entrou: {e}")
+            try:
+                await d_try.close()
+            except Exception:
+                pass
+    if disc is None:
+        sys.exit("\nNenhuma região aceitou o login. Confira e-mail/senha e se a conta tem senha (login só com Google/Apple não tem).")
     try:
-        devices = await disc.scan()
-        print(f"\nAparelhos na conta ({SERVER}): {len(devices)}")
+        print(f"\nEntrou na região: {usado}")
+        print(f"\nAparelhos na conta ({usado}): {len(devices)}")
         for d in devices:
             print(f"  - {d.name} | mac={d.mac} | online={d.online} | modelo={d.model} | versão={d.version}")
 
