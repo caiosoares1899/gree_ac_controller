@@ -19,6 +19,13 @@
       },
       "historico": {
         ".read": "auth != null && root.child('gree/permitidos/' + auth.token.email.toLowerCase().replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',')).exists()"
+      },
+      "presets": {
+        ".read": "auth != null && root.child('gree/permitidos/' + auth.token.email.toLowerCase().replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',')).exists()",
+        "$id": {
+          ".write": "auth != null && root.child('gree/permitidos/' + auth.token.email.toLowerCase().replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',').replace('.', ',')).exists()",
+          ".validate": "newData.hasChildren(['nome','patch']) && newData.child('nome').isString() && newData.child('nome').val().length <= 30"
+        }
       }
     }
   }

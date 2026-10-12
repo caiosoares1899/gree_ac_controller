@@ -51,7 +51,7 @@ class Aparelho:
         self.id, self.nome, self.dev = id_, nome, dev
         self.lock = asyncio.Lock()          # a lib não enfileira comandos sozinha
         self.ultimo = {}
-        self.pendentes = {}                 # campo → (valor, quem, uid, até) dos comandos que nós enviamos
+        self.pendentes = {}                 # campo → (valor, quem, uid, até, preset) dos comandos que nós enviamos
         self.falhas = 0
 
     async def publicar(self, online=True):
@@ -66,7 +66,7 @@ class Aparelho:
                 await fb(db.reference("gree/historico/" + self.id).push, {
                     "campo": k, "de": self.ultimo[k], "para": estado[k], "ts": t,
                     "quem": p[1] if meu else "Controle remoto", "uid": p[2] if meu else None,
-                    "origem": "app" if meu else "aparelho"})
+                    "preset": (p[4] or None) if meu else None, "origem": "app" if meu else "aparelho"})
         self.ultimo = {k: estado[k] for k in CAMPOS}
         await fb(db.reference("gree/aparelhos/" + self.id).update,
                  {"nome": self.nome, "estado": estado, "online": online, "atualizado": t})
@@ -81,8 +81,9 @@ class Aparelho:
         if not patch:
             return
         quem = str(cmd.get("quem") or "Alguém")[:40]
+        preset = str(cmd.get("preset") or "")[:30]
         for k, v in patch.items():
-            self.pendentes[k] = (v, quem, cmd.get("uid"), agora() + 20000)
+            self.pendentes[k] = (v, quem, cmd.get("uid"), agora() + 20000, preset)
         async with self.lock:
             aplica_patch(self.dev, patch, Mode, FanSpeed, VerticalSwing)
             await self.dev.push_state_update()
