@@ -20,6 +20,7 @@ Serviço Python que fica **sempre ligado na nuvem**: faz login no Gree+ (`greecl
 | `FIREBASE_SERVICE_ACCOUNT_JSON` | o **conteúdo** do JSON da conta de serviço (secreta) |
 | `GREE_NOMES` | `9424b8ab167f=Quarto,aabbccddeeff=Sala` (opcional) |
 | `POLL_SECONDS` | `10` (padrão) |
+| `SOMENTE_LEITURA` | `1` = só lê e publica; ignora comandos da página |
 
 ## 1º teste (grátis, no Google Colab — antes de pagar hospedagem)
 Faça upload do `service-account.json`, e numa célula:

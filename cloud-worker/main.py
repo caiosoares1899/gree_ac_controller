@@ -26,6 +26,8 @@ GREE_PASS = os.environ["GREE_PASS"]
 GREE_SERVER = os.environ.get("GREE_SERVER", "South American")
 DB_URL = os.environ["FIREBASE_DB_URL"]
 POLL = int(os.environ.get("POLL_SECONDS", "10"))
+# SOMENTE_LEITURA=1: lê e publica o estado, mas IGNORA todos os comandos da página (bom pra 1º teste / de madrugada)
+SOMENTE_LEITURA = os.environ.get("SOMENTE_LEITURA", "0") == "1"
 # "9424b8ab167f=Quarto,aabbccddeeff=Sala" — nomes bonitos (senão usa o nome que a Gree dá, ex. AC167f)
 NOMES = dict(p.split("=", 1) for p in os.environ.get("GREE_NOMES", "").split(",") if "=" in p)
 
@@ -133,6 +135,9 @@ async def sessao(fila):
                 apid, pid, cmd = await fila.get()
                 await fb(db.reference("gree/comandos/%s/%s" % (apid, pid)).delete)
                 if agora() - int(cmd.get("ts") or 0) > 60000:      # comando velho (serviço ficou fora): não executa de surpresa
+                    continue
+                if SOMENTE_LEITURA:
+                    log.info("[%s] modo só leitura: comando ignorado (%s)", apid, limpa_patch(cmd))
                     continue
                 ap = aparelhos.get(apid)
                 if ap:
