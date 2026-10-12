@@ -1,0 +1,15 @@
+{
+  "name": "Ar da casa",
+  "short_name": "Ar",
+  "description": "Controle dos ares-condicionados Gree",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#020a14",
+  "theme_color": "#050d18",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
