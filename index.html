@@ -183,7 +183,7 @@ input[type=range]::-moz-range-thumb{width:42px;height:42px;border:0;border-radiu
 
 <main id="app" style="width:100%;display:flex;flex-direction:column;align-items:center"></main>
 <div class="ultimo" id="ultimo"></div>
-<div class="version">v0.6 · gree</div>
+<div class="version">v0.6.1 · gree</div>
 
 <div class="ov" id="ov"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -192,7 +192,7 @@ input[type=range]::-moz-range-thumb{width:42px;height:42px;border:0;border-radiu
 <script type="module">
 // O SDK do Firebase só é carregado fora do modo demonstração (a demo abre sem rede).
 const FB = 'https://www.gstatic.com/firebasejs/10.12.0/';
-const VERSION = 'v0.6 · gree', VERSION_KEY = 'gree';
+const VERSION = 'v0.6.1 · gree', VERSION_KEY = 'gree';
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -599,7 +599,13 @@ function tentaLink() {
   if (LINK.acao) { const lig = estadoDe(alvo).power === 'on', a = norm(LINK.acao); patch.power = a === 'ligar' ? 'on' : a === 'desligar' ? 'off' : (lig ? 'off' : 'on'); }
   if (LINK.luz) { const a = norm(LINK.luz), acesa = estadoDe(alvo).lights !== 'off'; patch.lights = a === 'ligar' || a === 'acender' ? 'on' : a === 'desligar' || a === 'apagar' ? 'off' : (acesa ? 'off' : 'on'); }
   if (LINK.temp && +LINK.temp >= 16 && +LINK.temp <= 30) patch.temperature = Math.round(+LINK.temp);
-  if (Object.keys(patch).length) { aplica(alvo, patch); toast('✅ Pronto'); }
+  if (Object.keys(patch).length) {
+    const nm = aparelhos[alvo].nome || alvo, partes = [];
+    if (patch.power) partes.push(nm + (patch.power === 'on' ? ' ligado' : ' desligado'));
+    if (patch.temperature) partes.push(patch.temperature + '°');
+    if (patch.lights) partes.push('visor ' + (patch.lights === 'on' ? 'aceso' : 'apagado'));
+    aplica(alvo, patch); toast('✅ ' + partes.join(' · '));
+  }
 }
 
 // ── Início ──
